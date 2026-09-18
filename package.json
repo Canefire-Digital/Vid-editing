@@ -1,0 +1,39 @@
+{
+  "name": "vid-editing",
+  "version": "1.0.0",
+  "description": "Remotion video editing project for social media content",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx remotion studio src/index.ts",
+    "build": "npx remotion render src/index.ts SocialClipEdit out/social-clip.mp4",
+    "build:promo": "npx remotion render src/index.ts BusinessPromo out/business-promo.mp4",
+    "build:social-ad": "npx remotion render src/index.ts SocialAd out/social-ad.mp4",
+    "build:testimonial": "npx remotion render src/index.ts TestimonialVideo out/testimonial.mp4",
+    "build:all": "npm run build && npm run build:promo && npm run build:social-ad && npm run build:testimonial"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Canefire-Digital/Vid-editing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Canefire-Digital/Vid-editing/issues"
+  },
+  "homepage": "https://github.com/Canefire-Digital/Vid-editing#readme",
+  "dependencies": {
+    "@remotion/cli": "^4.0.526",
+    "@remotion/player": "^4.0.526",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.526"
+  },
+  "devDependencies": {
+    "@remotion/bundler": "^4.0.526",
+    "@remotion/renderer": "^4.0.526",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  }
+}
