@@ -15,9 +15,11 @@ import {
   ShieldCheck,
   Sofa,
   Sparkles,
+  Star,
   Truck,
   XCircle,
 } from "lucide-react";
+import { BeforeAfter } from "@/components/site/before-after";
 import { FloatingCta } from "@/components/site/floating-cta";
 import { SiteHeader } from "@/components/site/header";
 import { QuoteForm } from "@/components/site/quote-form";
@@ -109,6 +111,7 @@ export default async function HomePage() {
     telephone: info.phone ?? undefined,
     email: info.email ?? undefined,
     areaServed: AREAS.map((a) => ({ "@type": "Place", name: `${a}, QLD` })),
+    sameAs: info.googleProfileUrl ? [info.googleProfileUrl] : undefined,
     priceRange: `${aud(info.prices.quarter, true)}–${aud(info.prices.full, true)}`,
     address: { "@type": "PostalAddress", addressRegion: "QLD", addressCountry: "AU", addressLocality: "Whitsundays" },
   };
@@ -150,8 +153,25 @@ export default async function HomePage() {
                 </a>
               )}
             </div>
+            {info.googleProfileUrl && (
+              <a href={info.googleProfileUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-teal-300">
+                <span className="flex text-amber-300">
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <Star key={i} size={15} fill="currentColor" />
+                  ))}
+                </span>
+                See our reviews on Google →
+              </a>
+            )}
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
-              {["Upfront price before we start", "Locally owned & operated", "Before & after photos"].map((t) => (
+              {[
+                "Upfront price before we start",
+                info.insured ? (info.insuranceNote ? `Insured · ${info.insuranceNote}` : "Fully insured") : null,
+                "Locally owned & operated",
+                "Before & after photos",
+              ]
+                .filter((t): t is string => !!t)
+                .map((t) => (
                 <li key={t} className="flex items-center gap-2">
                   <CheckCircle2 size={16} className="text-teal-300" /> {t}
                 </li>
@@ -234,6 +254,26 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ───────── GALLERY (only when photos are ticked "Show on website") ───────── */}
+      {info.gallery.length > 0 && (
+        <section id="results" className="scroll-mt-24 px-4 py-20 md:py-28">
+          <div className="mx-auto max-w-6xl">
+            <Reveal>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-teal-300">Recent jobs</p>
+              <h2 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-5xl">Before. After. Gone.</h2>
+              <p className="mt-3 text-white/60">Drag the slider to see the difference.</p>
+            </Reveal>
+            <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {info.gallery.map((g, i) => (
+                <Reveal key={g.before} delay={i * 80}>
+                  <BeforeAfter before={g.before} after={g.after} label={g.suburb} />
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ───────── PRICING ───────── */}
       <section id="pricing" className="relative scroll-mt-24 px-4 py-20 md:py-28">
@@ -406,6 +446,11 @@ export default async function HomePage() {
                   or email {info.email}
                 </a>
               )}
+              {info.hours && (
+                <p className="flex items-center gap-2 text-sm text-white/60">
+                  <Clock3 size={16} className="text-teal-300" /> {info.hours}
+                </p>
+              )}
             </div>
           </Reveal>
           <Reveal delay={100}>
@@ -426,6 +471,12 @@ export default async function HomePage() {
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             {tel && <a href={tel} className="hover:text-teal-300">{info.phone}</a>}
             {info.email && <a href={`mailto:${info.email}`} className="hover:text-teal-300">{info.email}</a>}
+            {info.googleProfileUrl && (
+              <a href={info.googleProfileUrl} target="_blank" rel="noreferrer" className="hover:text-teal-300">
+                Google reviews
+              </a>
+            )}
+            <a href="/privacy" className="hover:text-teal-300">Privacy</a>
             <a href="/login" className="hover:text-teal-300">Team login</a>
           </div>
         </div>

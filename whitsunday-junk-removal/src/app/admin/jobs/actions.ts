@@ -110,6 +110,17 @@ export async function deleteJobPhotoAction(_prev: ActionResult, fd: FormData): P
   return { ok: "Photo removed." };
 }
 
+export async function toggleJobPhotoPublicAction(_prev: ActionResult, fd: FormData): Promise<ActionResult> {
+  const { supabase } = await getTeam();
+  const id = str(fd, "id")!;
+  const show = str(fd, "show") === "1";
+  const { data, error } = await supabase.from("job_photos").update({ show_on_website: show }).eq("id", id).select("job_id").single();
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/jobs/${data.job_id}`);
+  revalidatePath("/");
+  return { ok: show ? "Showing on website." : "Hidden from website." };
+}
+
 /**
  * Build an invoice from a job. mode = "draft" opens it for editing;
  * "cash" / "bank_transfer" marks it sent and paid in full on the spot.

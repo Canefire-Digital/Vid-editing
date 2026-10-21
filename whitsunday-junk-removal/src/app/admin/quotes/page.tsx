@@ -19,6 +19,9 @@ export default async function QuotesPage({ searchParams }: PageProps<"/admin/quo
   if (!showAll) q = q.in("status", ["new", "contacted", "quoted"]);
   const { data } = await q;
   const quotes = (data ?? []) as QuoteRequest[];
+  const allPaths = quotes.flatMap((q) => q.photo_paths ?? []);
+  const signed = allPaths.length ? (await supabase.storage.from("quote-photos").createSignedUrls(allPaths, 3600)).data ?? [] : [];
+  const photoUrl = new Map(signed.map((s) => [s.path, s.signedUrl]));
 
   return (
     <>
@@ -78,6 +81,18 @@ export default async function QuotesPage({ searchParams }: PageProps<"/admin/quo
                   <dd>{dmy(r.preferred_date)}</dd>
                 </div>
               </dl>
+              {(r.photo_paths ?? []).length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {r.photo_paths.map((path) =>
+                    photoUrl.get(path) ? (
+                      <a key={path} href={photoUrl.get(path)!} target="_blank" rel="noreferrer" className="block h-24 w-24 overflow-hidden rounded-xl border border-white/10">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={photoUrl.get(path)!} alt={`Photo from ${r.name}`} className="h-full w-full object-cover" loading="lazy" />
+                      </a>
+                    ) : null,
+                  )}
+                </div>
+              )}
               {r.message && <p className="mt-3 whitespace-pre-wrap rounded-lg bg-navy-950/50 p-3 text-sm text-white/80">{r.message}</p>}
               <div className="mt-4 flex flex-wrap gap-2 border-t border-white/5 pt-3">
                 {r.client_id ? (

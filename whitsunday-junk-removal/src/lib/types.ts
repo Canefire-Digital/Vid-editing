@@ -39,6 +39,11 @@ export type Settings = {
   price_half: number;
   price_quarter: number;
   quote_notify_email: string | null;
+  google_profile_url: string | null;
+  google_review_url: string | null;
+  insured: boolean;
+  insurance_note: string | null;
+  business_hours: string | null;
 };
 
 export type Client = Audit & {
@@ -157,6 +162,7 @@ export type QuoteRequest = Audit & {
   message: string | null;
   status: "new" | "contacted" | "quoted" | "won" | "lost";
   client_id: string | null;
+  photo_paths: string[];
 };
 
 export type ActionResult = { error?: string; ok?: string } | undefined;

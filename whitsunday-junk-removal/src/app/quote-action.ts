@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/server";
 import type { ActionResult } from "@/lib/types";
 
 const recent = new Map<string, number[]>();
+const MAX_PHOTOS = 5;
 
 export async function submitQuoteAction(_prev: ActionResult, fd: FormData): Promise<ActionResult> {
   // Honeypot: real people never see or fill this field.
@@ -35,7 +36,22 @@ export async function submitQuoteAction(_prev: ActionResult, fd: FormData): Prom
   };
 
   const supabase = createAdminClient();
-  const { error } = await supabase.from("quote_requests").insert(row);
+
+  // Photos (already shrunk in the browser). Max 5, images only, 2MB each.
+  const files = fd
+    .getAll("photos")
+    .filter((f): f is File => f instanceof File && f.size > 0)
+    .slice(0, MAX_PHOTOS);
+  const photo_paths: string[] = [];
+  for (const f of files) {
+    if (!["image/jpeg", "image/png", "image/webp"].includes(f.type) || f.size > 2 * 1024 * 1024) continue;
+    const ext = f.type === "image/png" ? "png" : f.type === "image/webp" ? "webp" : "jpg";
+    const path = `${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from("quote-photos").upload(path, f, { contentType: f.type });
+    if (!upErr) photo_paths.push(path);
+  }
+
+  const { error } = await supabase.from("quote_requests").insert({ ...row, photo_paths });
   if (error) {
     console.error("quote insert failed", error);
     return { error: "Sorry, that didn't send. Please call or text us instead." };
@@ -51,6 +67,7 @@ export async function submitQuoteAction(_prev: ActionResult, fd: FormData): Prom
       row.suburb ? `Suburb: ${row.suburb}` : null,
       row.load_size_guess ? `Load: ${row.load_size_guess}` : null,
       row.preferred_date ? `Preferred date: ${row.preferred_date}` : null,
+      photo_paths.length ? `Photos: ${photo_paths.length} attached (view in dashboard)` : null,
       row.message ? `\n${row.message}` : null,
     ].filter(Boolean) as string[];
     await sendEmail({

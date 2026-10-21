@@ -9,7 +9,7 @@ Next.js 16 · Supabase (database, logins, photo/receipt storage) · Netlify · R
 
 1. Create a project at [supabase.com](https://supabase.com). Region: **Sydney**.
 2. **SQL Editor → New query** → paste all of `supabase/migrations/0001_init.sql` → **Run**.
-   Then do the same with `supabase/migrations/0002_planner.sql` (run them in number order).
+   Then do the same with `0002_planner.sql` and `0003_site_extras.sql` (always in number order).
 3. **Authentication → Sign In / Providers → Email**: turn **"Allow new users to sign up" OFF**.
    (Nobody can create an account from outside — you add the three of you by hand.)
 4. **Authentication → Users → Add user → Create new user** — once each for Alex, Lucas and Kobi.
@@ -61,6 +61,12 @@ Next.js 16 · Supabase (database, logins, photo/receipt storage) · Netlify · R
 Go to `/login` → **Settings**, and fill in ABN, phone, email, bank details, and the next invoice number
 (if you've already issued invoices elsewhere, set it one higher than your last).
 Put your email in "Send website quote alerts to" to get pinged when someone fills in the website form.
+Under **Website & reviews** add your Google Business Profile link and your "write a review" link
+(Business Profile → *Ask for reviews* → copy link), and your hours. Tick **We're insured** only once
+the policy is active — it puts an insured badge on the site.
+
+**Website gallery:** on any job, tap *Show on website* on a before **and** an after photo and it appears
+in the "Before. After. Gone." section (suburb only, never the street address). Get the client's OK first.
 
 ---
 

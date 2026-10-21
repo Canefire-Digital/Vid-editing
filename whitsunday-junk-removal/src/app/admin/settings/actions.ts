@@ -50,11 +50,21 @@ export async function saveSettingsAction(_prev: ActionResult, fd: FormData): Pro
       price_half: money("price_half", current.price_half),
       price_quarter: money("price_quarter", current.price_quarter),
       quote_notify_email: str(fd, "quote_notify_email"),
+      google_profile_url: httpsOrNull(str(fd, "google_profile_url")),
+      google_review_url: httpsOrNull(str(fd, "google_review_url")),
+      insured: bool(fd, "insured"),
+      insurance_note: str(fd, "insurance_note"),
+      business_hours: str(fd, "business_hours"),
     })
     .eq("id", 1);
   if (error) return { error: error.message };
   revalidatePath("/", "layout");
   return { ok: "Settings saved." };
+}
+
+function httpsOrNull(v: string | null): string | null {
+  if (!v) return null;
+  return /^https:\/\//i.test(v) ? v : `https://${v.replace(/^\/+/, "")}`;
 }
 
 export async function saveProfileAction(_prev: ActionResult, fd: FormData): Promise<ActionResult> {

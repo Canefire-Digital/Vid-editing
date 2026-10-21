@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MapPin, Pencil, Phone, Plus, Trash2 } from "lucide-react";
+import { Globe, MapPin, Pencil, Phone, Plus, Star, Trash2 } from "lucide-react";
 import { ActionButton } from "@/components/admin/forms";
 import { PhotoUploader } from "@/components/admin/photo-uploader";
 import {
@@ -18,7 +18,7 @@ import { EXPENSE_CATEGORIES, JOB_STATUSES, LOAD_SIZES } from "@/lib/constants";
 import { aud, dateTime, dmy, longDate } from "@/lib/format";
 import { fractionLabel, timeLabel, trailerShare } from "@/lib/plan";
 import type { Expense, InvoiceSummary, JobStatus, JobSummary } from "@/lib/types";
-import { addJobPhotoAction, deleteJobPhotoAction, invoiceJobAction, setJobStatusAction } from "../actions";
+import { addJobPhotoAction, deleteJobPhotoAction, invoiceJobAction, setJobStatusAction, toggleJobPhotoPublicAction } from "../actions";
 
 export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">) {
   const { id } = await params;
@@ -33,7 +33,14 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
   ]);
   if (!j) notFound();
   const job = j as JobSummary;
-  const { data: client } = await supabase.from("clients").select("phone").eq("id", job.client_id).single();
+  const { data: client } = await supabase.from("clients").select("phone, contact_person, name").eq("id", job.client_id).single();
+  const firstName = (client?.contact_person ?? client?.name ?? "").split(" ")[0];
+  const reviewSms =
+    client?.phone && settings.google_review_url
+      ? `sms:${client.phone.replace(/[^\d+]/g, "")}?&body=${encodeURIComponent(
+          `Hi ${firstName}, thanks for choosing ${settings.business_name}! If you were happy with the job, a quick Google review would really help our small local business: ${settings.google_review_url}`,
+        )}`
+      : null;
   const expenses = (exp ?? []) as Expense[];
   const invoices = (inv ?? []) as InvoiceSummary[];
   const liveInvoice = invoices.find((i) => i.status !== "void");
@@ -139,6 +146,9 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
             )}
           </Card>
 
+          <p className="-mb-2 text-xs text-white/45">
+            Tap &quot;Show on website&quot; on a before <em>and</em> an after photo to add this job to the website gallery. Check the client is OK with it first.
+          </p>
           {(["before", "after"] as const).map((kind) => (
             <Card key={kind} title={kind === "before" ? "Before photos" : "After photos"} action={<PhotoUploader jobId={id} kind={kind} onUploaded={addJobPhotoAction} />}>
               {byKind(kind).length === 0 ? (
@@ -153,6 +163,15 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
                           <img src={urlFor.get(p.storage_path)} alt={`${kind} photo`} className="h-full w-full object-cover" loading="lazy" />
                         </a>
                       )}
+                      <div className="absolute left-1.5 top-1.5">
+                        <ActionButton
+                          action={toggleJobPhotoPublicAction}
+                          fields={{ id: p.id, show: p.show_on_website ? "0" : "1" }}
+                          className={`flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold ${p.show_on_website ? "bg-teal-400 text-navy-950" : "bg-black/60 text-white/80 hover:text-teal-200"}`}
+                        >
+                          <Globe size={12} /> {p.show_on_website ? "On website" : "Show on website"}
+                        </ActionButton>
+                      </div>
                       <div className="absolute right-1.5 top-1.5">
                         <ActionButton
                           action={deleteJobPhotoAction}
@@ -197,6 +216,25 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
         </div>
 
         <div className="space-y-5">
+          {(job.status === "done" || job.status === "invoiced" || job.status === "paid") && (
+            <Card>
+              {reviewSms ? (
+                <a href={reviewSms} className="btn btn-ghost w-full">
+                  <Star size={16} className="text-amber-300" /> Ask for a Google review
+                </a>
+              ) : (
+                <p className="text-xs text-white/50">
+                  {client?.phone ? (
+                    <>
+                      Add your Google review link in <Link href="/admin/settings" className="text-teal-300 underline">Settings</Link> to text clients a review request in one tap.
+                    </>
+                  ) : (
+                    "Add a phone number to this client to text them a review request."
+                  )}
+                </p>
+              )}
+            </Card>
+          )}
           {advance && (
             <Card>
               <ActionButton action={setJobStatusAction} fields={{ id, status: advance }} className="btn btn-primary w-full">

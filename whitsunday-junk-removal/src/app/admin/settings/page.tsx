@@ -67,6 +67,24 @@ export default async function SettingsPage() {
           <p className="mt-2 text-xs text-white/45">These also show on the public website pricing section.</p>
         </Card>
 
+        <Card title="Website & reviews">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Input label="Google Business Profile link" name="google_profile_url" value={s.google_profile_url} hint="Your Maps listing — shows a “See our Google reviews” button" />
+            <Input label="Google “write a review” link" name="google_review_url" value={s.google_review_url} hint="Business Profile → Ask for reviews → copy link. Used by the “Ask for a review” button on jobs" />
+            <Input label="Business hours" name="business_hours" value={s.business_hours} placeholder="Mon–Sat 7am–5pm" />
+          </div>
+          <label className="mt-4 flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
+            <input type="checkbox" name="insured" defaultChecked={s.insured} className="mt-1 h-4 w-4 accent-teal-400" />
+            <span className="text-sm">
+              <strong>We&apos;re insured</strong>
+              <span className="block text-white/55">Only tick this once your public liability policy is active. Shows an insured badge on the website.</span>
+            </span>
+          </label>
+          <div className="mt-3 md:w-1/2">
+            <Input label="Insurance wording on website" name="insurance_note" value={s.insurance_note} placeholder="$20M public liability" hint="Use exactly what your certificate of currency says" />
+          </div>
+        </Card>
+
         <Card title="Tax">
           <label className="mb-4 flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
             <input type="checkbox" name="gst_registered" defaultChecked={s.gst_registered} className="mt-1 h-4 w-4 accent-teal-400" />
