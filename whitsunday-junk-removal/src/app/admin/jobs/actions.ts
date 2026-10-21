@@ -27,7 +27,13 @@ async function jobFields(fd: FormData) {
     price: Math.max(0, price),
     status: oneOf(fd, "status", STATUSES, "booked"),
     notes: str(fd, "notes"),
+    start_time: /^\d{2}:\d{2}/.test(str(fd, "start_time") ?? "") ? str(fd, "start_time") : null,
+    load_fraction: load_size === "custom" ? positiveOrNull(num(fd, "load_fraction")) : null,
   };
+}
+
+function positiveOrNull(n: number | null): number | null {
+  return n && n > 0 && n <= 10 ? n : null;
 }
 
 async function saveWorkers(jobId: string, fd: FormData) {

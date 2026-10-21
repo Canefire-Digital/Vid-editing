@@ -6,6 +6,7 @@ import { useState } from "react";
 import {
   BarChart3,
   Briefcase,
+  CalendarDays,
   FileText,
   History,
   Home,
@@ -23,6 +24,7 @@ import {
 
 const NAV = [
   { href: "/admin", label: "Home", icon: Home },
+  { href: "/admin/plan", label: "Planner", icon: CalendarDays },
   { href: "/admin/jobs", label: "Jobs", icon: Briefcase },
   { href: "/admin/invoices", label: "Invoices", icon: FileText },
   { href: "/admin/expenses", label: "Expenses", icon: Receipt },
@@ -35,6 +37,7 @@ const NAV = [
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
+// Home, Planner | + | Jobs, Invoices (expenses live in the + menu)
 const MOBILE_TABS = NAV.slice(0, 4);
 
 const QUICK_ADD = [

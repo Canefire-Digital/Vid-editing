@@ -65,6 +65,8 @@ export type Job = Audit & {
   price: number;
   status: JobStatus;
   notes: string | null;
+  start_time: string | null;
+  load_fraction: number | null;
 };
 
 export type JobSummary = Job & {

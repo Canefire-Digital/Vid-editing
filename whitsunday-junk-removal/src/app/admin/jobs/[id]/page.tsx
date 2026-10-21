@@ -13,15 +13,17 @@ import {
   PageHeader,
   Stat,
 } from "@/components/admin/ui";
-import { getTeam, nameOf } from "@/lib/auth";
+import { getSettings, getTeam, nameOf } from "@/lib/auth";
 import { EXPENSE_CATEGORIES, JOB_STATUSES, LOAD_SIZES } from "@/lib/constants";
 import { aud, dateTime, dmy, longDate } from "@/lib/format";
+import { fractionLabel, timeLabel, trailerShare } from "@/lib/plan";
 import type { Expense, InvoiceSummary, JobStatus, JobSummary } from "@/lib/types";
 import { addJobPhotoAction, deleteJobPhotoAction, invoiceJobAction, setJobStatusAction } from "../actions";
 
 export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">) {
   const { id } = await params;
   const { supabase, team } = await getTeam();
+  const settings = await getSettings();
   const [{ data: j }, { data: workers }, { data: photos }, { data: exp }, { data: inv }] = await Promise.all([
     supabase.from("job_summary").select("*").eq("id", id).maybeSingle(),
     supabase.from("job_workers").select("profile_id").eq("job_id", id),
@@ -52,7 +54,15 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
             {job.client_name} <JobStatusBadge status={job.status} />
           </span>
         }
-        subtitle={`Job #${job.job_number} · ${longDate(job.job_date)} · ${LOAD_SIZES[job.load_size]}`}
+        subtitle={
+          <>
+            Job #{job.job_number} · {longDate(job.job_date)}
+            {timeLabel(job.start_time) && ` · ${timeLabel(job.start_time)}`} · {LOAD_SIZES[job.load_size]} ({fractionLabel(trailerShare(job, settings))} trailer) ·{" "}
+            <Link href={`/admin/plan?view=day&date=${job.job_date}`} className="text-teal-300 hover:underline">
+              See day plan
+            </Link>
+          </>
+        }
         back={{ href: "/admin/jobs", label: "Jobs" }}
         actions={
           <>

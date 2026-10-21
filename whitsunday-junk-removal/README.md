@@ -9,6 +9,7 @@ Next.js 16 · Supabase (database, logins, photo/receipt storage) · Netlify · R
 
 1. Create a project at [supabase.com](https://supabase.com). Region: **Sydney**.
 2. **SQL Editor → New query** → paste all of `supabase/migrations/0001_init.sql` → **Run**.
+   Then do the same with `supabase/migrations/0002_planner.sql` (run them in number order).
 3. **Authentication → Sign In / Providers → Email**: turn **"Allow new users to sign up" OFF**.
    (Nobody can create an account from outside — you add the three of you by hand.)
 4. **Authentication → Users → Add user → Create new user** — once each for Alex, Lucas and Kobi.
@@ -62,6 +63,14 @@ Go to `/login` → **Settings**, and fill in ABN, phone, email, bank details, an
 Put your email in "Send website quote alerts to" to get pinged when someone fills in the website form.
 
 ---
+
+## Planner (trailer view)
+
+`/admin/plan` shows each day as a ute and trailer. Every job fills its share of the trailer
+(quarter ¼, half ½, ¾, full = 1). When the trailer is full that's a tip run and the next job starts a new
+trailer, so you can see at a glance how many runs a day needs and who's on the crew.
+Set a **start time** on jobs to put them in run order. For **custom-price** jobs, pick the
+**trailer space** on the job (otherwise it's estimated from the price).
 
 ## How the money works
 

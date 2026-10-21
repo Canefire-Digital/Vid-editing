@@ -7,6 +7,18 @@ import { JOB_STATUSES, LOAD_SIZES } from "@/lib/constants";
 import { aud } from "@/lib/format";
 import type { ActionResult, Client, Job, JobStatus, LoadSize, Profile } from "@/lib/types";
 
+const TRAILER_SPACE = [
+  ["0.25", "¼ trailer"],
+  ["0.5", "½ trailer"],
+  ["0.75", "¾ trailer"],
+  ["1", "Full trailer"],
+  ["1.25", "1¼ trailers"],
+  ["1.5", "1½ trailers"],
+  ["2", "2 trailers"],
+  ["2.5", "2½ trailers"],
+  ["3", "3 trailers"],
+];
+
 type Props = {
   action: (prev: ActionResult, fd: FormData) => Promise<ActionResult>;
   clients: Pick<Client, "id" | "name" | "address">[];
@@ -69,6 +81,10 @@ export function JobForm({ action, clients, team, prices, job, workers, defaultCl
           <input className="input" type="date" name="job_date" defaultValue={job?.job_date ?? defaultDate} required />
         </label>
         <label className="block">
+          <span className="label">Start time (optional)</span>
+          <input className="input" type="time" name="start_time" defaultValue={job?.start_time?.slice(0, 5) ?? ""} step={900} />
+        </label>
+        <label className="block">
           <span className="label">Status</span>
           <select className="input" name="status" defaultValue={job?.status ?? "booked"}>
             {(Object.keys(JOB_STATUSES) as JobStatus[]).map((s) => (
@@ -114,7 +130,21 @@ export function JobForm({ action, clients, team, prices, job, workers, defaultCl
           />
         </label>
 
-        <div>
+        {size === "custom" && (
+          <label className="block">
+            <span className="label">Trailer space (for the planner)</span>
+            <select className="input" name="load_fraction" defaultValue={job?.load_fraction ? String(Number(job.load_fraction)) : ""}>
+              <option value="">Estimate from price</option>
+              {TRAILER_SPACE.map(([v, l]) => (
+                <option key={v} value={v}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+
+        <div className={size === "custom" ? "md:col-span-2" : ""}>
           <span className="label">Who worked it</span>
           <div className="flex flex-wrap gap-2">
             {team.map((p) => (
