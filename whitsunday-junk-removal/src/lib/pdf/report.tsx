@@ -143,7 +143,7 @@ function ReportDoc({ r, settings, team }: { r: FyReport; settings: Settings; tea
           </>
         )}
 
-        <Text style={s.h2}>Income received ({r.income.length} payments)</Text>
+        <Text style={s.h2}>Income received ({r.income.length} payment{r.income.length === 1 ? "" : "s"})</Text>
         <View style={s.head}>
           <Text style={s.date}>Date</Text>
           <Text style={s.grow}>Invoice / client</Text>

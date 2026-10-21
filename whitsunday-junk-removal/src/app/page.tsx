@@ -186,7 +186,7 @@ export default async function HomePage() {
                 Check my price
               </a>
             </div>
-            <div className="glass absolute -bottom-6 -left-4 flex animate-float-slow items-center gap-3 rounded-2xl px-4 py-3 sm:-left-10">
+            <div className="glass absolute -bottom-16 -left-3 flex animate-float-slow items-center gap-3 rounded-2xl px-4 py-3 sm:-left-10">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-300/15 text-teal-200">
                 <Clock3 size={20} />
               </span>
