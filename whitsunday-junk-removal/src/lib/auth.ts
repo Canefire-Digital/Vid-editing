@@ -6,6 +6,7 @@ import type { Profile, Settings } from "./types";
 
 /** Signed-in team member + the team list. Redirects anyone else away. */
 export const getTeam = cache(async () => {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) redirect("/login");
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const uid = data?.claims?.sub;

@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Bricolage_Grotesque, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const body = Inter({ variable: "--font-body", subsets: ["latin"] });
-const display = Outfit({ variable: "--font-head", subsets: ["latin"], weight: ["500", "600", "700", "800"] });
+const body = Plus_Jakarta_Sans({ variable: "--font-body", subsets: ["latin"] });
+const display = Bricolage_Grotesque({ variable: "--font-head", subsets: ["latin"], weight: ["500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050d1a",
+  themeColor: "#0b2545",
   width: "device-width",
   initialScale: 1,
 };

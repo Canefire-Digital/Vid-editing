@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Logo } from "@/components/admin/nav";
+import { Wordmark } from "@/components/site/wordmark";
 import { getPublicInfo } from "@/lib/public";
 
 export const revalidate = 300;
@@ -9,11 +9,11 @@ export const metadata: Metadata = { title: "Privacy policy" };
 export default async function PrivacyPage() {
   const info = await getPublicInfo();
   const contact = info.email ? (
-    <a href={`mailto:${info.email}`} className="text-teal-300 underline">
+    <a href={`mailto:${info.email}`} className="text-teal-700 underline">
       {info.email}
     </a>
   ) : info.phone ? (
-    <a href={`tel:${info.phone}`} className="text-teal-300 underline">
+    <a href={`tel:${info.phone}`} className="text-teal-700 underline">
       {info.phone}
     </a>
   ) : (
@@ -21,14 +21,15 @@ export default async function PrivacyPage() {
   );
 
   return (
+    <div className="site min-h-dvh">
     <main className="mx-auto max-w-3xl px-4 py-10 md:py-16">
       <Link href="/" className="mb-10 inline-block">
-        <Logo />
+        <Wordmark />
       </Link>
-      <h1 className="font-display text-3xl font-bold md:text-4xl">Privacy policy</h1>
-      <p className="mt-2 text-sm text-white/50">{info.businessName}{info.abn ? ` · ABN ${info.abn}` : ""}</p>
+      <h1 className="font-display text-3xl font-extrabold text-ocean md:text-4xl">Privacy policy</h1>
+      <p className="mt-2 text-sm text-ink-soft">{info.businessName}{info.abn ? ` · ABN ${info.abn}` : ""}</p>
 
-      <div className="mt-8 space-y-6 leading-relaxed text-white/75 [&_h2]:mb-2 [&_h2]:mt-8 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-white">
+      <div className="mt-8 space-y-6 leading-relaxed text-ink-soft [&_h2]:mb-2 [&_h2]:mt-8 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-ocean">
         <p>
           We&apos;re a small local business and we keep this simple: we only collect what we need to quote and do your job, and we never sell your
           information.
@@ -70,18 +71,19 @@ export default async function PrivacyPage() {
           You can ask to see, correct or delete the information we hold about you (apart from records we must keep for tax) at any time — contact us on{" "}
           {contact} and we&apos;ll sort it out promptly. If you&apos;re not happy with how we&apos;ve handled your information, please tell us so we can fix it. You can
           also contact the Office of the Australian Information Commissioner at{" "}
-          <a href="https://www.oaic.gov.au" className="text-teal-300 underline" target="_blank" rel="noreferrer">
+          <a href="https://www.oaic.gov.au" className="text-teal-700 underline" target="_blank" rel="noreferrer">
             oaic.gov.au
           </a>
           .
         </p>
 
-        <p className="pt-4 text-sm text-white/45">Last updated October 2026.</p>
+        <p className="pt-4 text-sm text-ink-soft">Last updated October 2026.</p>
       </div>
 
-      <Link href="/" className="btn btn-ghost mt-10">
+      <Link href="/" className="btn btn-outline mt-10">
         ← Back to home
       </Link>
     </main>
+    </div>
   );
 }
