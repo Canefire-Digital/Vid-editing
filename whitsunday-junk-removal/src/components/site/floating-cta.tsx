@@ -8,9 +8,12 @@ export function FloatingCta({ tel }: { tel: string | null }) {
 
   useEffect(() => {
     const onScroll = () => {
-      const r = document.getElementById("quote")?.getBoundingClientRect();
-      const inQuote = r ? r.top < window.innerHeight && r.bottom > 0 : false;
-      setShow(window.scrollY > 520 && !inQuote);
+      // Hide while the calculator or quote form is on screen — it would cover them.
+      const onScreen = (id: string) => {
+        const r = document.getElementById(id)?.getBoundingClientRect();
+        return r ? r.top < window.innerHeight && r.bottom > 0 : false;
+      };
+      setShow(window.scrollY > 520 && !onScreen("quote") && !onScreen("calculator"));
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });

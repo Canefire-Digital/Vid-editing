@@ -65,7 +65,7 @@ export function LiveTrailer({ blocks, tone = "light", className = "" }: { blocks
             style={{ right: `${b.right * 100}%`, width: `${b.w * 100}%`, background: b.colour, boxShadow: "inset -2px 0 0 rgb(255 255 255 / 0.35)" }}
             title={b.label}
           >
-            {b.w > 0.12 && b.label ? <span className="truncate px-1">{b.label}</span> : null}
+            {b.w > 0.22 && b.label ? <span className="truncate px-1">{b.label}</span> : null}
           </div>
         ))}
       </div>
