@@ -107,19 +107,19 @@ export function JobForm({ action, clients, team, prices, job, workers, defaultCl
               <label
                 key={s}
                 className={`cursor-pointer rounded-xl border px-3 py-2.5 text-center transition ${
-                  size === s ? "border-teal-400 bg-teal-400/15" : "border-white/10 bg-white/5 hover:border-white/25"
+                  size === s ? "border-teal-700 bg-teal-700/10" : "border-line bg-slate-100 hover:border-slate-300"
                 }`}
               >
                 <input type="radio" name="load_size" value={s} checked={size === s} onChange={() => pickSize(s)} className="sr-only" />
                 <span className="block text-sm font-semibold">{LOAD_SIZES[s]}</span>
-                <span className="block text-xs text-white/55">{s === "custom" ? "Set below" : aud(prices[s], true)}</span>
+                <span className="block text-xs text-slate-500">{s === "custom" ? "Set below" : aud(prices[s], true)}</span>
               </label>
             ))}
           </div>
         </div>
 
         <label className="block">
-          <span className="label">Price {size !== "custom" && <span className="font-normal text-white/40">(change to override)</span>}</span>
+          <span className="label">Price {size !== "custom" && <span className="font-normal text-slate-500">(change to override)</span>}</span>
           <input
             className="input"
             name="price"
@@ -148,13 +148,13 @@ export function JobForm({ action, clients, team, prices, job, workers, defaultCl
           <span className="label">Who worked it</span>
           <div className="flex flex-wrap gap-2">
             {team.map((p) => (
-              <label key={p.id} className="flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm has-checked:border-teal-400 has-checked:bg-teal-400/15">
+              <label key={p.id} className="flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-slate-100 px-3 py-2.5 text-sm has-checked:border-teal-700 has-checked:bg-teal-700/10">
                 <input
                   type="checkbox"
                   name="workers"
                   value={p.id}
                   defaultChecked={workers ? workers.includes(p.id) : p.id === meId}
-                  className="accent-teal-400"
+                  className="accent-teal-700"
                 />
                 {p.display_name}
               </label>

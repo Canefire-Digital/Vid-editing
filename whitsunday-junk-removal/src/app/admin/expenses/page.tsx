@@ -55,15 +55,15 @@ export default async function ExpensesPage({ searchParams }: PageProps<"/admin/e
           ["fy", "This financial year"],
           ["all", "All time"],
         ].map(([k, l]) => (
-          <Link key={k} href={link({ period: k })} className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium ${period === k ? "bg-teal-400 text-navy-950" : "bg-white/5 text-white/70 hover:bg-white/10"}`}>
+          <Link key={k} href={link({ period: k })} className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium ${period === k ? "bg-ocean text-white" : "bg-white text-ink-soft ring-1 ring-line hover:text-teal-700"}`}>
             {l}
           </Link>
         ))}
-        <span className="mx-1 w-px shrink-0 bg-white/10" />
-        <Link href={link({ flag: flag === "owed" ? null : "owed" })} className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium ${flag === "owed" ? "bg-amber-300 text-navy-950" : "bg-white/5 text-white/70"}`}>
+        <span className="mx-1 w-px shrink-0 bg-slate-100" />
+        <Link href={link({ flag: flag === "owed" ? null : "owed" })} className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium ${flag === "owed" ? "bg-amber-400 text-sun-ink" : "bg-white text-ink-soft ring-1 ring-line"}`}>
           Owed to partners
         </Link>
-        <Link href={link({ flag: flag === "noreceipt" ? null : "noreceipt" })} className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium ${flag === "noreceipt" ? "bg-red-300 text-navy-950" : "bg-white/5 text-white/70"}`}>
+        <Link href={link({ flag: flag === "noreceipt" ? null : "noreceipt" })} className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium ${flag === "noreceipt" ? "bg-red-600 text-white" : "bg-white text-ink-soft ring-1 ring-line"}`}>
           Missing receipt
         </Link>
       </div>
@@ -76,7 +76,7 @@ export default async function ExpensesPage({ searchParams }: PageProps<"/admin/e
       </div>
 
       {missing > 0 && flag !== "noreceipt" && (
-        <Link href={link({ flag: "noreceipt" })} className="mb-4 flex items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
+        <Link href={link({ flag: "noreceipt" })} className="mb-4 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           <AlertTriangle size={18} /> {missing} expense{missing === 1 ? " has" : "s have"} no receipt — the ATO may not accept these.
         </Link>
       )}
@@ -100,12 +100,12 @@ export default async function ExpensesPage({ searchParams }: PageProps<"/admin/e
                   <tr key={e.id}>
                     <td className="whitespace-nowrap">{dmy(e.expense_date)}</td>
                     <td>
-                      <Link href={`/admin/expenses/${e.id}`} className="font-medium hover:text-teal-300">
+                      <Link href={`/admin/expenses/${e.id}`} className="font-medium hover:text-teal-800">
                         {EXPENSE_CATEGORIES[e.category]}
-                        {e.supplier && <span className="text-white/60"> · {e.supplier}</span>}
+                        {e.supplier && <span className="text-ink-soft"> · {e.supplier}</span>}
                       </Link>
-                      <div className="flex flex-wrap items-center gap-1.5 text-xs text-white/50">
-                        {e.receipt_path ? <Paperclip size={12} className="text-teal-300" /> : <Badge tone="red">No receipt</Badge>}
+                      <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+                        {e.receipt_path ? <Paperclip size={12} className="text-teal-700" /> : <Badge tone="red">No receipt</Badge>}
                         {e.description}
                         {e.paid_by && !e.reimbursed_on && <Badge tone="amber">Owed to {nameOf(team, e.paid_by)}</Badge>}
                       </div>

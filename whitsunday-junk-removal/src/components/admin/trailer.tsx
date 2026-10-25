@@ -37,12 +37,12 @@ export function TrailerGraphic({
             <stop offset="1" stopColor="#94a3b8" />
           </linearGradient>
           <pattern id="empty-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <line x1="0" y1="0" x2="0" y2="8" stroke="rgb(255 255 255 / 0.07)" strokeWidth="3" />
+            <line x1="0" y1="0" x2="0" y2="8" stroke="rgb(11 37 69 / 0.06)" strokeWidth="3" />
           </pattern>
         </defs>
 
         {/* ground */}
-        <line x1="0" y1="137" x2="400" y2="137" stroke="rgb(255 255 255 / 0.12)" strokeWidth="1.5" strokeDasharray="6 6" />
+        <line x1="0" y1="137" x2="400" y2="137" stroke="rgb(11 37 69 / 0.12)" strokeWidth="1.5" strokeDasharray="6 6" />
 
         {/* ── trailer ── */}
         <rect x={bedX} y={bedY} width={bedW} height={bedH} rx="3" fill="url(#empty-hatch)" />
@@ -69,9 +69,9 @@ export function TrailerGraphic({
           );
         })}
         {/* trailer cage + rails */}
-        <rect x={bedX} y={bedY} width={bedW} height={bedH} rx="3" fill="none" stroke="#cbd5e1" strokeWidth="3" />
+        <rect x={bedX} y={bedY} width={bedW} height={bedH} rx="3" fill="none" stroke="#0b2545" strokeWidth="3" />
         {[0.25, 0.5, 0.75].map((q) => (
-          <line key={q} x1={bedX + bedW * q} y1={bedY} x2={bedX + bedW * q} y2={bedY + bedH} stroke="rgb(203 213 225 / 0.35)" strokeWidth="1" strokeDasharray="3 4" />
+          <line key={q} x1={bedX + bedW * q} y1={bedY} x2={bedX + bedW * q} y2={bedY + bedH} stroke="rgb(11 37 69 / 0.25)" strokeWidth="1" strokeDasharray="3 4" />
         ))}
         <rect x={bedX - 2} y={bedY + bedH} width={bedW + 4} height="8" rx="2" fill="#64748b" />
         {/* drawbar to ute */}
@@ -82,9 +82,9 @@ export function TrailerGraphic({
         {/* ── ute ── */}
         <g>
           {/* tray */}
-          <rect x="234" y="72" width="70" height="34" rx="3" fill="url(#ute-body)" />
+          <rect x="234" y="72" width="70" height="34" rx="3" fill="url(#ute-body)" stroke="rgb(11 37 69 / 0.18)" />
           {/* cab */}
-          <path d="M304 106 V 70 Q 304 56 318 54 L 338 52 Q 348 52 354 60 L 368 80 L 384 84 Q 392 86 392 96 V 106 Z" fill="url(#ute-body)" />
+          <path d="M304 106 V 70 Q 304 56 318 54 L 338 52 Q 348 52 354 60 L 368 80 L 384 84 Q 392 86 392 96 V 106 Z" fill="url(#ute-body)" stroke="rgb(11 37 69 / 0.18)" />
           {/* window */}
           <path d="M312 78 V 66 Q 312 61 318 60 L 337 59 Q 343 59 346 64 L 356 78 Z" fill="#0f2240" opacity="0.85" />
           {/* bumper / lights */}
@@ -97,12 +97,12 @@ export function TrailerGraphic({
         </g>
 
         {/* capacity readout */}
-        <text x={bedX} y="22" fontSize="12" fontWeight="700" fill="#5eead4">
+        <text x={bedX} y="22" fontSize="12" fontWeight="700" fill="#0f766e">
           {total > 1 ? `Tip run ${index + 1} of ${total} · ` : ""}
           {Math.round(trip.used * 100)}% full
         </text>
         {trip.used < 0.999 && (
-          <text x={bedX + bedW} y="22" fontSize="11" textAnchor="end" fill="rgb(255 255 255 / 0.5)">
+          <text x={bedX + bedW} y="22" fontSize="11" textAnchor="end" fill="#46586e">
             {fractionLabel(Math.max(0, 1 - trip.used))} free
           </text>
         )}
@@ -114,7 +114,7 @@ export function TrailerGraphic({
 function Wheel({ cx, cy, r }: { cx: number; cy: number; r: number }) {
   return (
     <g>
-      <circle cx={cx} cy={cy} r={r} fill="#0b1220" stroke="#1e293b" strokeWidth="3" />
+      <circle cx={cx} cy={cy} r={r} fill="#0f172a" stroke="#334155" strokeWidth="3" />
       <circle cx={cx} cy={cy} r={r * 0.45} fill="#94a3b8" />
     </g>
   );

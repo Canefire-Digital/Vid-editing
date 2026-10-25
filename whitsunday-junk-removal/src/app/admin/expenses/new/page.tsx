@@ -20,7 +20,7 @@ export default async function NewExpensePage({ searchParams }: PageProps<"/admin
     <>
       <PageHeader title="New expense" back={jobId ? { href: `/admin/jobs/${jobId}`, label: "Back to job" } : { href: "/admin/expenses", label: "Expenses" }} />
       {typeof sp.saved === "string" && (
-        <p className="mb-4 rounded-xl border border-teal-400/30 bg-teal-500/10 px-4 py-3 text-sm text-teal-200">Saved {sp.saved}. Add the next one.</p>
+        <p className="mb-4 rounded-xl border border-teal-700/30 bg-teal-50 px-4 py-3 text-sm text-teal-800">Saved {sp.saved}. Add the next one.</p>
       )}
       <Card>
         <ExpenseForm

@@ -112,7 +112,7 @@ export function InvoiceForm({ action, clients, jobs, invoice, items, defaults, g
         <label className="block">
           <span className="label">Payment terms (days)</span>
           <input className="input" type="number" min={0} name="payment_terms_days" value={terms} onChange={(e) => setTerms(Number(e.target.value) || 0)} />
-          <span className="mt-1 block text-xs text-white/50">
+          <span className="mt-1 block text-xs text-slate-500">
             Due {terms === 0 ? "on receipt" : ""} {dmy(addDays(issueDate, terms))}
           </span>
         </label>
@@ -122,7 +122,7 @@ export function InvoiceForm({ action, clients, jobs, invoice, items, defaults, g
         <span className="label">Line items</span>
         <div className="space-y-3">
           {lines.map((l, idx) => (
-            <div key={l.key} className="rounded-xl border border-white/10 bg-navy-950/40 p-3">
+            <div key={l.key} className="rounded-xl border border-line bg-paper p-3">
               <div className="grid gap-2 sm:grid-cols-[1fr_80px_120px_auto]">
                 <textarea
                   className="input min-h-[44px]"
@@ -146,7 +146,7 @@ export function InvoiceForm({ action, clients, jobs, invoice, items, defaults, g
                   </button>
                 </div>
               </div>
-              <div className="mt-1 text-right text-xs text-white/50">
+              <div className="mt-1 text-right text-xs text-slate-500">
                 {aud(round2((Number(l.quantity) || 0) * (Number(l.unit_price) || 0)))}
               </div>
             </div>
@@ -162,25 +162,25 @@ export function InvoiceForm({ action, clients, jobs, invoice, items, defaults, g
           <span className="label">Notes on invoice</span>
           <textarea className="input" name="notes" defaultValue={invoice?.notes ?? ""} placeholder="Optional — e.g. property manager reference" />
         </label>
-        <div className="rounded-xl border border-white/10 bg-navy-950/40 p-4 text-sm">
+        <div className="rounded-xl border border-line bg-paper p-4 text-sm">
           <label className="mb-3 flex items-center gap-2">
-            <input type="checkbox" name="gst_enabled" checked={gst} onChange={(e) => setGst(e.target.checked)} className="h-4 w-4 accent-teal-400" />
+            <input type="checkbox" name="gst_enabled" checked={gst} onChange={(e) => setGst(e.target.checked)} className="h-4 w-4 accent-teal-700" />
             Charge GST ({rate}%)
-            {!gstRegistered && gst && <span className="text-xs text-amber-300">Not registered for GST yet!</span>}
+            {!gstRegistered && gst && <span className="text-xs text-amber-700">Not registered for GST yet!</span>}
           </label>
           <div className="flex justify-between py-1">
-            <span className="text-white/60">Subtotal</span>
+            <span className="text-ink-soft">Subtotal</span>
             <span className="tabular-nums">{aud(subtotal)}</span>
           </div>
           {gst && (
             <div className="flex justify-between py-1">
-              <span className="text-white/60">GST</span>
+              <span className="text-ink-soft">GST</span>
               <span className="tabular-nums">{aud(gstAmount)}</span>
             </div>
           )}
-          <div className="mt-1 flex justify-between border-t border-white/10 pt-2 font-display text-lg font-bold">
+          <div className="mt-1 flex justify-between border-t border-line pt-2 font-display text-lg font-bold">
             <span>Total</span>
-            <span className="tabular-nums text-teal-300">{aud(subtotal + gstAmount)}</span>
+            <span className="tabular-nums text-teal-700">{aud(subtotal + gstAmount)}</span>
           </div>
         </div>
       </div>

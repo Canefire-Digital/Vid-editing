@@ -55,7 +55,7 @@ export function PhotoUploader({
       <button type="button" className="btn btn-ghost btn-sm" disabled={!!busy} onClick={() => input.current?.click()}>
         <Camera size={16} /> {busy ?? `Add ${kind} photos`}
       </button>
-      {error && <p className="mt-1 text-xs text-red-300">{error}</p>}
+      {error && <p className="mt-1 text-xs text-red-700">{error}</p>}
     </div>
   );
 }

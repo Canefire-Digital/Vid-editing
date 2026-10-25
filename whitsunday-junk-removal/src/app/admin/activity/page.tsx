@@ -56,26 +56,26 @@ export default async function ActivityPage({ searchParams }: PageProps<"/admin/a
         {rows.length === 0 ? (
           <Empty>No activity yet.</Empty>
         ) : (
-          <ul className="divide-y divide-white/5">
+          <ul className="divide-y divide-line">
             {rows.map((r) => {
               const href = r.action !== "delete" && LINKS[r.table_name]?.(r.record_id);
               const verb = r.action === "create" ? "added" : r.action === "update" ? "edited" : "deleted";
               const body = (
                 <>
-                  <strong className="text-white">{r.actor ? nameOf(team, r.actor) : "Website / system"}</strong> {verb} {LABEL[r.table_name] ?? r.table_name}
-                  <span className="text-white/50"> {describe(r)}</span>
+                  <strong className="text-ocean">{r.actor ? nameOf(team, r.actor) : "Website / system"}</strong> {verb} {LABEL[r.table_name] ?? r.table_name}
+                  <span className="text-slate-500"> {describe(r)}</span>
                 </>
               );
               return (
                 <li key={r.id} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 py-2.5 text-sm">
                   {href ? (
-                    <Link href={href} className="text-white/80 hover:text-teal-300">
+                    <Link href={href} className="text-ink hover:text-teal-800">
                       {body}
                     </Link>
                   ) : (
-                    <span className="text-white/80">{body}</span>
+                    <span className="text-ink">{body}</span>
                   )}
-                  <span className="text-xs text-white/40">{dateTime(r.at)}</span>
+                  <span className="text-xs text-slate-500">{dateTime(r.at)}</span>
                 </li>
               );
             })}

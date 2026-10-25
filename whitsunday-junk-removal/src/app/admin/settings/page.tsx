@@ -10,7 +10,7 @@ function Input({ label, name, value, type = "text", hint, ...rest }: { label: st
     <label className="block">
       <span className="label">{label}</span>
       <input className="input" name={name} type={type} defaultValue={value ?? ""} {...rest} />
-      {hint && <span className="mt-1 block text-xs text-white/45">{hint}</span>}
+      {hint && <span className="mt-1 block text-xs text-slate-500">{hint}</span>}
     </label>
   );
 }
@@ -64,7 +64,7 @@ export default async function SettingsPage() {
             <Input label="Half load" name="price_half" value={s.price_half} inputMode="decimal" />
             <Input label="Quarter load" name="price_quarter" value={s.price_quarter} inputMode="decimal" />
           </div>
-          <p className="mt-2 text-xs text-white/45">These also show on the public website pricing section.</p>
+          <p className="mt-2 text-xs text-slate-500">These also show on the public website pricing section.</p>
         </Card>
 
         <Card title="Website & reviews">
@@ -73,11 +73,11 @@ export default async function SettingsPage() {
             <Input label="Google “write a review” link" name="google_review_url" value={s.google_review_url} hint="Business Profile → Ask for reviews → copy link. Used by the “Ask for a review” button on jobs" />
             <Input label="Business hours" name="business_hours" value={s.business_hours} placeholder="Mon–Sat 7am–5pm" />
           </div>
-          <label className="mt-4 flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
-            <input type="checkbox" name="insured" defaultChecked={s.insured} className="mt-1 h-4 w-4 accent-teal-400" />
+          <label className="mt-4 flex items-start gap-3 rounded-xl border border-line bg-slate-100 p-3">
+            <input type="checkbox" name="insured" defaultChecked={s.insured} className="mt-1 h-4 w-4 accent-teal-700" />
             <span className="text-sm">
               <strong>We&apos;re insured</strong>
-              <span className="block text-white/55">Only tick this once your public liability policy is active. Shows an insured badge on the website.</span>
+              <span className="block text-slate-500">Only tick this once your public liability policy is active. Shows an insured badge on the website.</span>
             </span>
           </label>
           <div className="mt-3 md:w-1/2">
@@ -86,11 +86,11 @@ export default async function SettingsPage() {
         </Card>
 
         <Card title="Tax">
-          <label className="mb-4 flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
-            <input type="checkbox" name="gst_registered" defaultChecked={s.gst_registered} className="mt-1 h-4 w-4 accent-teal-400" />
+          <label className="mb-4 flex items-start gap-3 rounded-xl border border-line bg-slate-100 p-3">
+            <input type="checkbox" name="gst_registered" defaultChecked={s.gst_registered} className="mt-1 h-4 w-4 accent-teal-700" />
             <span className="text-sm">
               <strong>Registered for GST</strong>
-              <span className="block text-white/55">
+              <span className="block text-slate-500">
                 Only tick this once the ATO has confirmed your registration. New invoices will then add GST and be titled &quot;Tax Invoice&quot;. Existing invoices don&apos;t change.
               </span>
             </span>
@@ -106,7 +106,7 @@ export default async function SettingsPage() {
         <Card title="Your name">
           <ActionForm action={saveProfileAction} submitLabel="Update name">
             <Input label="Display name" name="display_name" value={me.display_name} required />
-            <p className="mt-2 text-xs text-white/45">Signed in as {me.email}</p>
+            <p className="mt-2 text-xs text-slate-500">Signed in as {me.email}</p>
           </ActionForm>
         </Card>
         <Card title="Change your password">

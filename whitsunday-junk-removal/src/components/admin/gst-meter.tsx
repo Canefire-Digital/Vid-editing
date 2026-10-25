@@ -11,31 +11,31 @@ export function GstMeter({ gst, compact = false }: { gst: GstStatus; compact?: b
       <div className="mb-2 flex items-end justify-between gap-3">
         <div>
           <div className="font-display text-2xl font-bold tabular-nums">{aud(gst.turnover, true)}</div>
-          <div className="text-xs text-white/50">GST turnover, last 12 months</div>
+          <div className="text-xs text-slate-500">GST turnover, last 12 months</div>
         </div>
         <div className="text-right">
-          <div className={`font-display text-lg font-bold ${gst.over ? "text-red-300" : gst.alert ? "text-amber-300" : "text-teal-300"}`}>{gst.pct.toFixed(0)}%</div>
-          <div className="text-xs text-white/50">of {aud(GST_THRESHOLD, true)}</div>
+          <div className={`font-display text-lg font-bold ${gst.over ? "text-red-700" : gst.alert ? "text-amber-700" : "text-teal-700"}`}>{gst.pct.toFixed(0)}%</div>
+          <div className="text-xs text-slate-500">of {aud(GST_THRESHOLD, true)}</div>
         </div>
       </div>
       <div className="relative">
         <ProgressBar pct={gst.pct} tone={tone} />
         <div className="absolute -top-1 h-5 w-0.5 bg-amber-300/80" style={{ left: `${(GST_ALERT_AT / GST_THRESHOLD) * 100}%` }} title="80% alert" />
       </div>
-      <p className="mt-2 text-sm text-white/60">
+      <p className="mt-2 text-sm text-ink-soft">
         {gst.over ? (
-          <span className="text-red-200">Over the threshold — you must register for GST within 21 days.</span>
+          <span className="text-red-800">Over the threshold — you must register for GST within 21 days.</span>
         ) : gst.alert ? (
-          <span className="text-amber-200">Past 80%. Talk to your accountant about registering for GST now.</span>
+          <span className="text-amber-900">Past 80%. Talk to your accountant about registering for GST now.</span>
         ) : gst.projectedDate ? (
-          <>At the current pace you&apos;ll reach {aud(GST_THRESHOLD, true)} around <strong className="text-white">{longDate(gst.projectedDate)}</strong>.</>
+          <>At the current pace you&apos;ll reach {aud(GST_THRESHOLD, true)} around <strong className="text-ocean">{longDate(gst.projectedDate)}</strong>.</>
         ) : (
           <>Not enough invoices yet to project a date.</>
         )}
         {compact && (
           <>
             {" "}
-            <Link href="/admin/gst" className="text-teal-300 hover:underline">
+            <Link href="/admin/gst" className="text-teal-700 hover:underline">
               Details →
             </Link>
           </>

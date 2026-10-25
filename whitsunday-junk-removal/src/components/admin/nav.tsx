@@ -63,13 +63,13 @@ export function AdminNav({ userName, newQuotes, signOut }: { userName: string; n
         href={href}
         onClick={onClick}
         className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-          isActive(pathname, href) ? "bg-teal-400/15 text-teal-300" : "text-white/70 hover:bg-white/5 hover:text-white"
+          isActive(pathname, href) ? "bg-teal-700/10 text-teal-700" : "text-ink-soft hover:bg-slate-100 hover:text-ocean"
         }`}
       >
         <Icon size={18} />
         <span className="flex-1">{label}</span>
         {href === "/admin/quotes" && newQuotes > 0 && (
-          <span className="rounded-full bg-teal-400 px-2 text-xs font-bold text-navy-950">{newQuotes}</span>
+          <span className="rounded-full bg-teal-700 px-2 text-xs font-bold text-white">{newQuotes}</span>
         )}
       </Link>
     ));
@@ -77,7 +77,7 @@ export function AdminNav({ userName, newQuotes, signOut }: { userName: string; n
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-white/5 bg-navy-900/80 px-4 py-6 backdrop-blur-xl lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-line bg-white px-4 py-6 lg:flex">
         <Link href="/admin" className="mb-8 px-2">
           <Logo />
         </Link>
@@ -85,12 +85,12 @@ export function AdminNav({ userName, newQuotes, signOut }: { userName: string; n
           <Plus size={18} /> New job
         </Link>
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto">{links()}</nav>
-        <div className="mt-4 flex items-center justify-between rounded-xl bg-white/5 px-3 py-2 text-sm">
+        <div className="mt-4 flex items-center justify-between rounded-xl bg-slate-100 px-3 py-2 text-sm">
           <span>
-            <span className="text-white/50">Signed in as</span> <strong>{userName}</strong>
+            <span className="text-slate-500">Signed in as</span> <strong>{userName}</strong>
           </span>
           <form action={signOut}>
-            <button className="rounded-lg p-1.5 text-white/60 hover:bg-white/10 hover:text-white" aria-label="Sign out">
+            <button className="rounded-lg p-1.5 text-ink-soft hover:bg-slate-100 hover:text-ocean" aria-label="Sign out">
               <LogOut size={16} />
             </button>
           </form>
@@ -98,21 +98,21 @@ export function AdminNav({ userName, newQuotes, signOut }: { userName: string; n
       </aside>
 
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/5 bg-navy-950/85 px-4 py-3 backdrop-blur-xl lg:hidden">
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-line bg-white/90 px-4 py-3 backdrop-blur-xl lg:hidden">
         <Link href="/admin">
           <Logo small />
         </Link>
-        <button className="rounded-lg p-2 text-white/80 hover:bg-white/10" onClick={() => setMenuOpen(true)} aria-label="Open menu">
+        <button className="rounded-lg p-2 text-ink hover:bg-slate-100" onClick={() => setMenuOpen(true)} aria-label="Open menu">
           <Menu size={22} />
         </button>
       </header>
 
       {/* Mobile full menu */}
       {menuOpen && (
-        <div className="fixed inset-0 z-50 bg-navy-950/95 px-4 py-4 backdrop-blur-xl lg:hidden">
+        <div className="fixed inset-0 z-50 bg-white px-4 py-4 lg:hidden">
           <div className="mb-6 flex items-center justify-between">
             <Logo small />
-            <button className="rounded-lg p-2 hover:bg-white/10" onClick={() => setMenuOpen(false)} aria-label="Close menu">
+            <button className="rounded-lg p-2 hover:bg-slate-100" onClick={() => setMenuOpen(false)} aria-label="Close menu">
               <X size={22} />
             </button>
           </div>
@@ -126,7 +126,7 @@ export function AdminNav({ userName, newQuotes, signOut }: { userName: string; n
       )}
 
       {/* Mobile bottom tabs + floating add */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-navy-900/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden">
         <div className="grid grid-cols-5">
           {MOBILE_TABS.slice(0, 2).map((t) => (
             <Tab key={t.href} {...t} active={isActive(pathname, t.href)} />
@@ -134,7 +134,7 @@ export function AdminNav({ userName, newQuotes, signOut }: { userName: string; n
           <div className="relative flex justify-center">
             <button
               onClick={() => setAddOpen((v) => !v)}
-              className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-teal-300 to-teal-500 text-navy-950 shadow-lg shadow-teal-500/40"
+              className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-teal-600 to-teal-800 text-white shadow-lg shadow-teal-700/40"
               aria-label="Quick add"
             >
               {addOpen ? <X size={26} /> : <Plus size={26} />}
@@ -153,9 +153,9 @@ export function AdminNav({ userName, newQuotes, signOut }: { userName: string; n
                 key={q.href}
                 href={q.href}
                 onClick={() => setAddOpen(false)}
-                className="flex items-center gap-3 rounded-xl px-4 py-3.5 font-medium hover:bg-white/10"
+                className="flex items-center gap-3 rounded-xl px-4 py-3.5 font-medium hover:bg-slate-100"
               >
-                <Plus size={18} className="text-teal-300" /> {q.label}
+                <Plus size={18} className="text-teal-700" /> {q.label}
               </Link>
             ))}
           </div>
@@ -167,7 +167,7 @@ export function AdminNav({ userName, newQuotes, signOut }: { userName: string; n
 
 function Tab({ href, label, icon: Icon, active }: { href: string; label: string; icon: typeof Home; active: boolean }) {
   return (
-    <Link href={href} className={`flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium ${active ? "text-teal-300" : "text-white/55"}`}>
+    <Link href={href} className={`flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium ${active ? "text-teal-700" : "text-slate-500"}`}>
       <Icon size={21} />
       {label}
     </Link>
@@ -177,7 +177,7 @@ function Tab({ href, label, icon: Icon, active }: { href: string; label: string;
 export function Logo({ small = false }: { small?: boolean }) {
   return (
     <span className="flex items-center gap-2.5">
-      <span className={`flex items-center justify-center rounded-xl bg-gradient-to-br from-teal-300 to-aqua-400 text-navy-950 ${small ? "h-8 w-8" : "h-9 w-9"}`}>
+      <span className={`flex items-center justify-center rounded-xl bg-gradient-to-br from-teal-400 to-aqua-400 text-ocean ${small ? "h-8 w-8" : "h-9 w-9"}`}>
         <svg viewBox="0 0 24 24" className={small ? "h-5 w-5" : "h-5.5 w-5.5"} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z" />
           <circle cx="7" cy="17.5" r="1.8" />
@@ -185,8 +185,8 @@ export function Logo({ small = false }: { small?: boolean }) {
         </svg>
       </span>
       <span className="font-display leading-tight">
-        <span className="block text-sm font-bold tracking-tight">Whitsunday</span>
-        <span className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-teal-300">Junk Removal</span>
+        <span className="block text-sm font-bold tracking-tight text-ocean">Whitsunday</span>
+        <span className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-teal-700">Junk Removal</span>
       </span>
     </span>
   );

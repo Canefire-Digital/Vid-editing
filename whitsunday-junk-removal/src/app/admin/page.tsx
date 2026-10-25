@@ -45,7 +45,7 @@ export default async function DashboardPage() {
     <>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm text-white/50">{new Date(`${today}T00:00:00Z`).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })}</p>
+          <p className="text-sm text-slate-500">{new Date(`${today}T00:00:00Z`).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })}</p>
           <h1 className="font-display text-3xl font-bold tracking-tight">
             {greeting}, <span className="text-gradient">{me.display_name}</span>
           </h1>
@@ -95,7 +95,7 @@ export default async function DashboardPage() {
         <Stat
           label="Outstanding"
           value={aud(sum(outstanding, (i) => i.balance), true)}
-          hint={overdue.length ? <span className="text-red-300">{overdue.length} overdue</span> : `${outstanding.length} invoices`}
+          hint={overdue.length ? <span className="text-red-700">{overdue.length} overdue</span> : `${outstanding.length} invoices`}
           tone={overdue.length ? "bad" : "default"}
           href="/admin/invoices"
         />
@@ -106,29 +106,29 @@ export default async function DashboardPage() {
           title="Coming up"
           className="lg:col-span-3"
           action={
-            <Link href="/admin/jobs" className="flex items-center gap-1 text-sm text-teal-300 hover:underline">
+            <Link href="/admin/jobs" className="flex items-center gap-1 text-sm text-teal-700 hover:underline">
               All jobs <ArrowRight size={14} />
             </Link>
           }
         >
           {toInvoice > 0 && (
-            <p className="mb-3 text-sm text-amber-200">
+            <p className="mb-3 text-sm text-amber-900">
               {toInvoice} finished job{toInvoice === 1 ? "" : "s"} still need an invoice.
             </p>
           )}
           {jobs.length === 0 ? (
             <Empty action={<Link href="/admin/jobs/new" className="btn btn-primary btn-sm">Book a job</Link>}>No open jobs.</Empty>
           ) : (
-            <ul className="divide-y divide-white/5">
+            <ul className="divide-y divide-line">
               {jobs.map((j) => (
                 <li key={j.id}>
-                  <Link href={`/admin/jobs/${j.id}`} className="flex items-center justify-between gap-3 py-3 hover:text-teal-200">
+                  <Link href={`/admin/jobs/${j.id}`} className="flex items-center justify-between gap-3 py-3 hover:text-teal-800">
                     <div className="min-w-0">
-                      <div className={`text-xs font-semibold ${j.job_date === today ? "text-teal-300" : j.job_date < today ? "text-amber-300" : "text-white/50"}`}>
+                      <div className={`text-xs font-semibold ${j.job_date === today ? "text-teal-700" : j.job_date < today ? "text-amber-700" : "text-slate-500"}`}>
                         {j.job_date === today ? "Today" : shortDate(j.job_date)}
                       </div>
                       <div className="truncate font-medium">{j.client_name}</div>
-                      <div className="truncate text-xs text-white/50">
+                      <div className="truncate text-xs text-slate-500">
                         {LOAD_SIZES[j.load_size]}
                         {j.address && ` · ${j.address}`}
                       </div>
@@ -151,7 +151,7 @@ export default async function DashboardPage() {
           <Card
             title="Partner balances"
             action={
-              <Link href="/admin/partners" className="flex items-center gap-1 text-sm text-teal-300 hover:underline">
+              <Link href="/admin/partners" className="flex items-center gap-1 text-sm text-teal-700 hover:underline">
                 Details <ArrowRight size={14} />
               </Link>
             }
@@ -161,14 +161,14 @@ export default async function DashboardPage() {
                 <li key={p.partner.id} className="flex items-center justify-between gap-2">
                   <div>
                     <div className="font-medium">{p.partner.display_name}</div>
-                    <div className="text-xs text-white/50">
+                    <div className="text-xs text-slate-500">
                       Tax set-aside {aud(p.taxSetAside, true)}
-                      {p.reimbursementOwed > 0 && <span className="text-amber-300"> · {aud(p.reimbursementOwed)} to reimburse</span>}
+                      {p.reimbursementOwed > 0 && <span className="text-amber-700"> · {aud(p.reimbursementOwed)} to reimburse</span>}
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-display text-lg font-bold tabular-nums text-teal-300">{aud(p.totalOwed, true)}</div>
-                    <div className="text-[11px] text-white/40">owed</div>
+                    <div className="font-display text-lg font-bold tabular-nums text-teal-700">{aud(p.totalOwed, true)}</div>
+                    <div className="text-[11px] text-slate-500">owed</div>
                   </div>
                 </li>
               ))}
@@ -182,9 +182,9 @@ export default async function DashboardPage() {
 
 function Alert({ href, tone, icon, children }: { href: string; tone: "red" | "amber" | "teal"; icon?: React.ReactNode; children: React.ReactNode }) {
   const cls = {
-    red: "border-red-400/30 bg-red-500/10 text-red-200",
-    amber: "border-amber-400/30 bg-amber-400/10 text-amber-100",
-    teal: "border-teal-400/30 bg-teal-400/10 text-teal-100",
+    red: "border-red-300 bg-red-50 text-red-800",
+    amber: "border-amber-300 bg-amber-50 text-amber-900",
+    teal: "border-teal-700/30 bg-teal-700/10 text-teal-800",
   }[tone];
   return (
     <Link href={href} className={`flex items-center gap-2 rounded-xl border px-4 py-3 text-sm ${cls}`}>

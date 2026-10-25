@@ -48,7 +48,7 @@ export default async function QuotesPage({ searchParams }: PageProps<"/admin/quo
                     <h2 className="font-display text-lg font-semibold">{r.name}</h2>
                     <Badge tone={TONES[r.status]}>{r.status}</Badge>
                   </div>
-                  <p className="text-xs text-white/50">
+                  <p className="text-xs text-slate-500">
                     {dateTime(r.created_at)}
                     {r.updated_by && <> · updated by {nameOf(team, r.updated_by)}</>}
                   </p>
@@ -69,15 +69,15 @@ export default async function QuotesPage({ searchParams }: PageProps<"/admin/quo
               </div>
               <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
                 <div>
-                  <dt className="text-xs text-white/45">Suburb</dt>
+                  <dt className="text-xs text-slate-500">Suburb</dt>
                   <dd>{r.suburb ?? "—"}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-white/45">Load size guess</dt>
+                  <dt className="text-xs text-slate-500">Load size guess</dt>
                   <dd>{r.load_size_guess ?? "—"}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-white/45">Preferred date</dt>
+                  <dt className="text-xs text-slate-500">Preferred date</dt>
                   <dd>{dmy(r.preferred_date)}</dd>
                 </div>
               </dl>
@@ -85,7 +85,7 @@ export default async function QuotesPage({ searchParams }: PageProps<"/admin/quo
                 <div className="mt-3 flex flex-wrap gap-2">
                   {r.photo_paths.map((path) =>
                     photoUrl.get(path) ? (
-                      <a key={path} href={photoUrl.get(path)!} target="_blank" rel="noreferrer" className="block h-24 w-24 overflow-hidden rounded-xl border border-white/10">
+                      <a key={path} href={photoUrl.get(path)!} target="_blank" rel="noreferrer" className="block h-24 w-24 overflow-hidden rounded-xl border border-line">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={photoUrl.get(path)!} alt={`Photo from ${r.name}`} className="h-full w-full object-cover" loading="lazy" />
                       </a>
@@ -93,8 +93,8 @@ export default async function QuotesPage({ searchParams }: PageProps<"/admin/quo
                   )}
                 </div>
               )}
-              {r.message && <p className="mt-3 whitespace-pre-wrap rounded-lg bg-navy-950/50 p-3 text-sm text-white/80">{r.message}</p>}
-              <div className="mt-4 flex flex-wrap gap-2 border-t border-white/5 pt-3">
+              {r.message && <p className="mt-3 whitespace-pre-wrap rounded-lg bg-paper p-3 text-sm text-ink">{r.message}</p>}
+              <div className="mt-4 flex flex-wrap gap-2 border-t border-line pt-3">
                 {r.client_id ? (
                   <Link href={`/admin/jobs/new?client=${r.client_id}`} className="btn btn-ghost btn-sm">
                     Book job

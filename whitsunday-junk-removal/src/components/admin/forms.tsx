@@ -50,12 +50,12 @@ export function ActionForm({
         {children}
       </fieldset>
       {state?.error && (
-        <p role="alert" className="mt-4 rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+        <p role="alert" className="mt-4 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
           {state.error}
         </p>
       )}
       {state?.ok && (
-        <p role="status" className="mt-4 rounded-lg border border-teal-400/30 bg-teal-500/10 px-3 py-2 text-sm text-teal-200">
+        <p role="status" className="mt-4 rounded-lg border border-teal-700/30 bg-teal-50 px-3 py-2 text-sm text-teal-800">
           {state.ok}
         </p>
       )}
@@ -102,7 +102,7 @@ export function ActionButton({
       >
         {pending ? "Working…" : children}
       </button>
-      {state?.error && <span className="mt-1 text-xs text-red-300">{state.error}</span>}
+      {state?.error && <span className="mt-1 text-xs text-red-700">{state.error}</span>}
     </span>
   );
 }
@@ -118,9 +118,9 @@ export function Disclosure({ label, children, defaultOpen = false, buttonClassNa
         </button>
       )}
       {open && (
-        <div className="rounded-xl border border-teal-400/20 bg-navy-900/60 p-4">
+        <div className="rounded-xl border border-teal-700/30 bg-paper p-4">
           {children}
-          <button type="button" className="mt-3 text-xs text-white/50 hover:text-white" onClick={() => setOpen(false)}>
+          <button type="button" className="mt-3 text-xs text-slate-500 hover:text-ocean" onClick={() => setOpen(false)}>
             Cancel
           </button>
         </div>

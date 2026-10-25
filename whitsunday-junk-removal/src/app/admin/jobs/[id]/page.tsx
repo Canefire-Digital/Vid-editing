@@ -65,7 +65,7 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
           <>
             Job #{job.job_number} · {longDate(job.job_date)}
             {timeLabel(job.start_time) && ` · ${timeLabel(job.start_time)}`} · {LOAD_SIZES[job.load_size]} ({fractionLabel(trailerShare(job, settings))} trailer) ·{" "}
-            <Link href={`/admin/plan?view=day&date=${job.job_date}`} className="text-teal-300 hover:underline">
+            <Link href={`/admin/plan?view=day&date=${job.job_date}`} className="text-teal-700 hover:underline">
               See day plan
             </Link>
           </>
@@ -107,10 +107,10 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
             {liveInvoice ? (
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <Link href={`/admin/invoices/${liveInvoice.id}`} className="font-display text-lg font-bold hover:text-teal-300">
+                  <Link href={`/admin/invoices/${liveInvoice.id}`} className="font-display text-lg font-bold hover:text-teal-800">
                     {liveInvoice.invoice_number}
                   </Link>
-                  <div className="mt-1 flex items-center gap-2 text-sm text-white/60">
+                  <div className="mt-1 flex items-center gap-2 text-sm text-ink-soft">
                     <InvoiceStatusBadge status={liveInvoice.display_status} /> {aud(liveInvoice.total)} · due {dmy(liveInvoice.due_date)}
                   </div>
                 </div>
@@ -120,7 +120,7 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
               </div>
             ) : (
               <div className="space-y-3">
-                <p className="text-sm text-white/60">No invoice yet. Paid on the spot? One tap records the invoice and payment together.</p>
+                <p className="text-sm text-ink-soft">No invoice yet. Paid on the spot? One tap records the invoice and payment together.</p>
                 <div className="flex flex-wrap gap-2">
                   <ActionButton action={invoiceJobAction} fields={{ id, mode: "draft" }} className="btn btn-primary btn-sm">
                     Create invoice
@@ -146,17 +146,17 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
             )}
           </Card>
 
-          <p className="-mb-2 text-xs text-white/45">
+          <p className="-mb-2 text-xs text-slate-500">
             Tap &quot;Show on website&quot; on a before <em>and</em> an after photo to add this job to the website gallery. Check the client is OK with it first.
           </p>
           {(["before", "after"] as const).map((kind) => (
             <Card key={kind} title={kind === "before" ? "Before photos" : "After photos"} action={<PhotoUploader jobId={id} kind={kind} onUploaded={addJobPhotoAction} />}>
               {byKind(kind).length === 0 ? (
-                <p className="text-sm text-white/45">No {kind} photos yet.</p>
+                <p className="text-sm text-slate-500">No {kind} photos yet.</p>
               ) : (
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {byKind(kind).map((p) => (
-                    <div key={p.id} className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-white/5">
+                    <div key={p.id} className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-100">
                       {urlFor.get(p.storage_path) && (
                         <a href={urlFor.get(p.storage_path)} target="_blank" rel="noreferrer">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -167,7 +167,7 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
                         <ActionButton
                           action={toggleJobPhotoPublicAction}
                           fields={{ id: p.id, show: p.show_on_website ? "0" : "1" }}
-                          className={`flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold ${p.show_on_website ? "bg-teal-400 text-navy-950" : "bg-black/60 text-white/80 hover:text-teal-200"}`}
+                          className={`flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold ${p.show_on_website ? "bg-teal-600 text-white" : "bg-black/60 text-white hover:text-teal-200"}`}
                         >
                           <Globe size={12} /> {p.show_on_website ? "On website" : "Show on website"}
                         </ActionButton>
@@ -177,7 +177,7 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
                           action={deleteJobPhotoAction}
                           fields={{ id: p.id }}
                           confirm="Delete this photo?"
-                          className="rounded-lg bg-black/60 p-1.5 text-white/80 hover:text-red-300"
+                          className="rounded-lg bg-black/60 p-1.5 text-white hover:text-red-300"
                         >
                           <Trash2 size={14} />
                         </ActionButton>
@@ -200,12 +200,12 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
             {expenses.length === 0 ? (
               <Empty>Add fuel and dump fees here to see true profit for this job.</Empty>
             ) : (
-              <ul className="divide-y divide-white/5">
+              <ul className="divide-y divide-line">
                 {expenses.map((e) => (
                   <li key={e.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
-                    <Link href={`/admin/expenses/${e.id}`} className="hover:text-teal-300">
+                    <Link href={`/admin/expenses/${e.id}`} className="hover:text-teal-800">
                       <span className="font-medium">{EXPENSE_CATEGORIES[e.category]}</span>
-                      {e.description && <span className="text-white/50"> · {e.description}</span>}
+                      {e.description && <span className="text-slate-500"> · {e.description}</span>}
                     </Link>
                     <span className="tabular-nums">{aud(e.amount)}</span>
                   </li>
@@ -220,13 +220,13 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
             <Card>
               {reviewSms ? (
                 <a href={reviewSms} className="btn btn-ghost w-full">
-                  <Star size={16} className="text-amber-300" /> Ask for a Google review
+                  <Star size={16} className="text-amber-700" /> Ask for a Google review
                 </a>
               ) : (
-                <p className="text-xs text-white/50">
+                <p className="text-xs text-slate-500">
                   {client?.phone ? (
                     <>
-                      Add your Google review link in <Link href="/admin/settings" className="text-teal-300 underline">Settings</Link> to text clients a review request in one tap.
+                      Add your Google review link in <Link href="/admin/settings" className="text-teal-700 underline">Settings</Link> to text clients a review request in one tap.
                     </>
                   ) : (
                     "Add a phone number to this client to text them a review request."
@@ -245,7 +245,7 @@ export default async function JobPage({ params }: PageProps<"/admin/jobs/[id]">)
           <Card title="Details">
             <DefList
               items={[
-                ["Client", <Link key="c" href={`/admin/clients/${job.client_id}`} className="text-teal-300 hover:underline">{job.client_name}</Link>],
+                ["Client", <Link key="c" href={`/admin/clients/${job.client_id}`} className="text-teal-700 hover:underline">{job.client_name}</Link>],
                 ["Address", job.address],
                 ["Worked by", (workers ?? []).map((w) => nameOf(team, w.profile_id)).join(", ")],
                 ["Description", job.description && <span className="whitespace-pre-wrap">{job.description}</span>],

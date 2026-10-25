@@ -44,7 +44,7 @@ export default async function JobsPage({ searchParams }: PageProps<"/admin/jobs"
             key={f.key}
             href={`/admin/jobs?status=${f.key}`}
             className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium ${
-              filter === f.key ? "bg-teal-400 text-navy-950" : "bg-white/5 text-white/70 hover:bg-white/10"
+              filter === f.key ? "bg-ocean text-white" : "bg-white text-ink-soft ring-1 ring-line hover:text-teal-700"
             }`}
           >
             {f.label}
@@ -64,11 +64,11 @@ export default async function JobsPage({ searchParams }: PageProps<"/admin/jobs"
               <Link key={j.id} href={`/admin/jobs/${j.id}`} className="card block active:scale-[0.99]">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className={`text-xs font-semibold ${j.job_date === today ? "text-teal-300" : "text-white/50"}`}>
+                    <div className={`text-xs font-semibold ${j.job_date === today ? "text-teal-700" : "text-slate-500"}`}>
                       {j.job_date === today ? "Today" : shortDate(j.job_date)} · #{j.job_number}
                     </div>
                     <div className="truncate font-semibold">{j.client_name}</div>
-                    <div className="truncate text-sm text-white/55">{j.address ?? LOAD_SIZES[j.load_size]}</div>
+                    <div className="truncate text-sm text-slate-500">{j.address ?? LOAD_SIZES[j.load_size]}</div>
                   </div>
                   <div className="text-right">
                     <div className="font-display font-bold tabular-nums">{aud(j.price, true)}</div>
@@ -100,23 +100,23 @@ export default async function JobsPage({ searchParams }: PageProps<"/admin/jobs"
                 <tbody>
                   {jobs.map((j) => (
                     <tr key={j.id}>
-                      <td className={`whitespace-nowrap ${j.job_date === today ? "font-semibold text-teal-300" : ""}`}>
+                      <td className={`whitespace-nowrap ${j.job_date === today ? "font-semibold text-teal-700" : ""}`}>
                         {j.job_date === today ? "Today" : shortDate(j.job_date)}
                       </td>
-                      <td className="text-white/50">{j.job_number}</td>
+                      <td className="text-slate-500">{j.job_number}</td>
                       <td>
-                        <Link href={`/admin/jobs/${j.id}`} className="font-medium hover:text-teal-300">
+                        <Link href={`/admin/jobs/${j.id}`} className="font-medium hover:text-teal-800">
                           {j.client_name}
                         </Link>
-                        {j.address && <div className="max-w-xs truncate text-xs text-white/50">{j.address}</div>}
+                        {j.address && <div className="max-w-xs truncate text-xs text-slate-500">{j.address}</div>}
                       </td>
                       <td className="whitespace-nowrap">{LOAD_SIZES[j.load_size]}</td>
                       <td>
                         <JobStatusBadge status={j.status} />
                       </td>
                       <td className="text-right tabular-nums">{aud(j.price)}</td>
-                      <td className="text-right tabular-nums text-white/60">{aud(j.expenses_total)}</td>
-                      <td className={`text-right font-semibold tabular-nums ${j.profit < 0 ? "text-red-300" : "text-teal-300"}`}>{aud(j.profit)}</td>
+                      <td className="text-right tabular-nums text-ink-soft">{aud(j.expenses_total)}</td>
+                      <td className={`text-right font-semibold tabular-nums ${j.profit < 0 ? "text-red-700" : "text-teal-700"}`}>{aud(j.profit)}</td>
                     </tr>
                   ))}
                 </tbody>

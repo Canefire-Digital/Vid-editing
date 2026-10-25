@@ -77,28 +77,28 @@ export function ExpenseForm({ action, team, jobs, expense, receiptUrl, defaultJo
           onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
         />
         {receiptPath ? (
-          <div className="flex items-center gap-3 rounded-xl border border-teal-400/30 bg-teal-400/10 p-3">
+          <div className="flex items-center gap-3 rounded-xl border border-teal-700/30 bg-teal-700/10 p-3">
             {preview && !isPdf ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={preview} alt="Receipt" className="h-20 w-16 rounded-lg object-cover" />
             ) : (
-              <FileText className="text-teal-300" size={32} />
+              <FileText className="text-teal-700" size={32} />
             )}
             <div className="flex-1 text-sm">
-              <div className="font-semibold text-teal-200">Receipt attached</div>
+              <div className="font-semibold text-teal-800">Receipt attached</div>
               {preview && (
-                <a href={preview} target="_blank" rel="noreferrer" className="text-xs text-white/60 underline">
+                <a href={preview} target="_blank" rel="noreferrer" className="text-xs text-ink-soft underline">
                   View
                 </a>
               )}
             </div>
-            <button type="button" className="rounded-lg p-2 text-white/60 hover:bg-white/10" onClick={() => fileRef.current?.click()}>
+            <button type="button" className="rounded-lg p-2 text-ink-soft hover:bg-slate-100" onClick={() => fileRef.current?.click()}>
               Replace
             </button>
             <button
               type="button"
               aria-label="Remove receipt"
-              className="rounded-lg p-2 text-white/60 hover:bg-white/10"
+              className="rounded-lg p-2 text-ink-soft hover:bg-slate-100"
               onClick={() => {
                 setReceiptPath(null);
                 setPreview(null);
@@ -112,16 +112,16 @@ export function ExpenseForm({ action, team, jobs, expense, receiptUrl, defaultJo
             type="button"
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
-            className="flex w-full flex-col items-center gap-2 rounded-xl border-2 border-dashed border-teal-400/40 bg-teal-400/5 px-4 py-6 text-teal-200 transition hover:bg-teal-400/10"
+            className="flex w-full flex-col items-center gap-2 rounded-xl border-2 border-dashed border-teal-700/30 bg-teal-50 px-4 py-6 text-teal-800 transition hover:bg-teal-100"
           >
             <Camera size={28} />
             <span className="font-semibold">{uploading ? "Uploading…" : "Take photo / upload receipt"}</span>
           </button>
         )}
-        {uploadError && <p className="mt-1 text-xs text-red-300">{uploadError}</p>}
+        {uploadError && <p className="mt-1 text-xs text-red-700">{uploadError}</p>}
         {!receiptPath && (
-          <label className="mt-2 flex items-center gap-2 text-sm text-white/60">
-            <input type="checkbox" name="no_receipt" defaultChecked={expense?.no_receipt} className="accent-amber-400" />
+          <label className="mt-2 flex items-center gap-2 text-sm text-ink-soft">
+            <input type="checkbox" name="no_receipt" defaultChecked={expense?.no_receipt} className="accent-amber-600" />
             No receipt available (can&apos;t be claimed — it&apos;ll be flagged)
           </label>
         )}
@@ -135,7 +135,7 @@ export function ExpenseForm({ action, team, jobs, expense, receiptUrl, defaultJo
               <label
                 key={c}
                 className={`cursor-pointer rounded-xl border px-2 py-2.5 text-center text-sm font-medium transition ${
-                  category === c ? "border-teal-400 bg-teal-400/15 text-teal-200" : "border-white/10 bg-white/5 text-white/70"
+                  category === c ? "border-teal-700 bg-teal-700/10 text-teal-800" : "border-line bg-slate-100 text-ink-soft"
                 }`}
               >
                 <input type="radio" name="category" value={c} checked={category === c} onChange={() => setCategory(c)} className="sr-only" />
@@ -179,7 +179,7 @@ export function ExpenseForm({ action, team, jobs, expense, receiptUrl, defaultJo
               <label
                 key={p.id}
                 className={`cursor-pointer rounded-xl border px-3 py-2.5 text-center text-sm font-medium transition ${
-                  paidBy === p.id ? "border-teal-400 bg-teal-400/15 text-teal-200" : "border-white/10 bg-white/5 text-white/70"
+                  paidBy === p.id ? "border-teal-700 bg-teal-700/10 text-teal-800" : "border-line bg-slate-100 text-ink-soft"
                 }`}
               >
                 <input type="radio" name="paid_by" value={p.id} checked={paidBy === p.id} onChange={() => setPaidBy(p.id)} className="sr-only" />
@@ -188,7 +188,7 @@ export function ExpenseForm({ action, team, jobs, expense, receiptUrl, defaultJo
             ))}
           </div>
           {paidBy !== "business" && (
-            <p className="mt-2 text-xs text-amber-200">
+            <p className="mt-2 text-xs text-amber-900">
               The business will owe {team.find((t) => t.id === paidBy)?.display_name} this amount until it&apos;s paid back (see Partners).
             </p>
           )}
@@ -198,7 +198,7 @@ export function ExpenseForm({ action, team, jobs, expense, receiptUrl, defaultJo
           <label className="block">
             <span className="label">Paid back on</span>
             <input className="input" type="date" name="reimbursed_on" defaultValue={expense.reimbursed_on ?? ""} />
-            <span className="mt-1 block text-xs text-white/45">Leave blank while it&apos;s still owed. {expense.reimbursed_on ? "" : `Owed: ${aud(expense.amount)}`}</span>
+            <span className="mt-1 block text-xs text-slate-500">Leave blank while it&apos;s still owed. {expense.reimbursed_on ? "" : `Owed: ${aud(expense.amount)}`}</span>
           </label>
         )}
       </div>

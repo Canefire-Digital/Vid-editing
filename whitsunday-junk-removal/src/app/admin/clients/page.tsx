@@ -56,8 +56,8 @@ export default async function ClientsPage({ searchParams }: PageProps<"/admin/cl
             </option>
           ))}
         </select>
-        <label className="flex items-center gap-2 px-2 text-sm text-white/70">
-          <input type="checkbox" name="archived" value="1" defaultChecked={showArchived} className="accent-teal-400" /> Show archived
+        <label className="flex items-center gap-2 px-2 text-sm text-ink-soft">
+          <input type="checkbox" name="archived" value="1" defaultChecked={showArchived} className="accent-teal-700" /> Show archived
         </label>
         <button className="btn btn-ghost">Filter</button>
       </form>
@@ -85,20 +85,20 @@ export default async function ClientsPage({ searchParams }: PageProps<"/admin/cl
                   return (
                     <tr key={c.id}>
                       <td>
-                        <Link href={`/admin/clients/${c.id}`} className="font-semibold hover:text-teal-300">
+                        <Link href={`/admin/clients/${c.id}`} className="font-semibold hover:text-teal-800">
                           {c.name}
                         </Link>
-                        {c.contact_person && <div className="text-xs text-white/50">{c.contact_person}</div>}
-                        {c.archived && <div className="text-xs text-amber-300">Archived</div>}
+                        {c.contact_person && <div className="text-xs text-slate-500">{c.contact_person}</div>}
+                        {c.archived && <div className="text-xs text-amber-700">Archived</div>}
                       </td>
                       <td className="hidden sm:table-cell">
                         <ClientTypeBadge type={c.type} />
                       </td>
                       <td className="hidden md:table-cell">
-                        {c.phone ? <a href={`tel:${c.phone}`} className="hover:text-teal-300">{c.phone}</a> : "—"}
+                        {c.phone ? <a href={`tel:${c.phone}`} className="hover:text-teal-800">{c.phone}</a> : "—"}
                       </td>
                       <td className="text-right tabular-nums">{aud(t.spent)}</td>
-                      <td className={`text-right tabular-nums ${t.owing > 0 ? "text-amber-300" : "text-white/40"}`}>{aud(t.owing)}</td>
+                      <td className={`text-right tabular-nums ${t.owing > 0 ? "text-amber-700" : "text-slate-500"}`}>{aud(t.owing)}</td>
                     </tr>
                   );
                 })}

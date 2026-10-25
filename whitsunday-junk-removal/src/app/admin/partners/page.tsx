@@ -41,24 +41,24 @@ export default async function PartnersPage() {
           <div key={b.partner.id} className="glass rounded-2xl p-5">
             <div className="flex items-center justify-between">
               <h2 className="font-display text-xl font-bold">{b.partner.display_name}</h2>
-              <span className="rounded-full bg-teal-400/15 px-2.5 py-0.5 text-xs font-semibold text-teal-300">1/3</span>
+              <span className="rounded-full bg-teal-700/10 px-2.5 py-0.5 text-xs font-semibold text-teal-700">1/3</span>
             </div>
-            <div className="mt-4 text-xs font-semibold uppercase tracking-wider text-white/50">Owed to {b.partner.display_name} now</div>
-            <div className={`font-display text-3xl font-bold tabular-nums ${b.totalOwed < 0 ? "text-red-300" : "text-teal-300"}`}>{aud(b.totalOwed)}</div>
+            <div className="mt-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Owed to {b.partner.display_name} now</div>
+            <div className={`font-display text-3xl font-bold tabular-nums ${b.totalOwed < 0 ? "text-red-700" : "text-teal-700"}`}>{aud(b.totalOwed)}</div>
             <dl className="mt-4 space-y-1.5 text-sm">
               <Row k="Profit share (all time)" v={aud(b.shareAllTime)} />
               <Row k="Payouts received" v={`− ${aud(b.payoutsAllTime)}`} />
               <Row k="Unpaid profit share" v={aud(b.available)} strong />
               <Row k="Reimbursements owed" v={aud(b.reimbursementOwed)} warn={b.reimbursementOwed > 0} />
             </dl>
-            <div className="mt-4 rounded-xl bg-navy-950/50 p-3 text-sm">
-              <div className="text-xs font-semibold uppercase tracking-wider text-white/50">{fy.label}</div>
+            <div className="mt-4 rounded-xl bg-paper p-3 text-sm">
+              <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">{fy.label}</div>
               <Row k="Share of profit" v={aud(b.fyShare)} />
               <Row k="Payouts this FY" v={aud(b.fyPayouts)} />
               <Row k={`Tax set-aside (${Number(settings.tax_set_aside_rate)}%)`} v={aud(b.taxSetAside)} strong />
             </div>
             {b.available < 0 && (
-              <p className="mt-3 text-xs text-red-300">Paid out more than their share so far — this evens out as profit comes in, or adjust future payouts.</p>
+              <p className="mt-3 text-xs text-red-700">Paid out more than their share so far — this evens out as profit comes in, or adjust future payouts.</p>
             )}
           </div>
         ))}
@@ -72,8 +72,8 @@ export default async function PartnersPage() {
                 <span className="label">Paid to (tick all three for an even split — amount is per person)</span>
                 <div className="flex flex-wrap gap-2">
                   {team.map((p) => (
-                    <label key={p.id} className="flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm has-checked:border-teal-400 has-checked:bg-teal-400/15">
-                      <input type="checkbox" name="profile_id" value={p.id} defaultChecked className="accent-teal-400" />
+                    <label key={p.id} className="flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-slate-100 px-3 py-2.5 text-sm has-checked:border-teal-700 has-checked:bg-teal-700/10">
+                      <input type="checkbox" name="profile_id" value={p.id} defaultChecked className="accent-teal-700" />
                       {p.display_name}
                     </label>
                   ))}
@@ -119,16 +119,16 @@ export default async function PartnersPage() {
                           Paid back all {aud(mine.reduce((a, e) => a + Number(e.amount), 0))}
                         </ActionButton>
                       </div>
-                      <ul className="divide-y divide-white/5 text-sm">
+                      <ul className="divide-y divide-line text-sm">
                         {mine.map((e) => (
                           <li key={e.id} className="flex items-center justify-between gap-2 py-2">
-                            <Link href={`/admin/expenses/${e.id}`} className="hover:text-teal-300">
+                            <Link href={`/admin/expenses/${e.id}`} className="hover:text-teal-800">
                               {dmy(e.expense_date)} · {EXPENSE_CATEGORIES[e.category]}
-                              {e.supplier && <span className="text-white/50"> · {e.supplier}</span>}
+                              {e.supplier && <span className="text-slate-500"> · {e.supplier}</span>}
                             </Link>
                             <span className="flex items-center gap-2">
                               <span className="tabular-nums">{aud(e.amount)}</span>
-                              <ActionButton action={markReimbursedAction} fields={{ id: e.id, reimbursed_on: today }} className="text-xs text-teal-300 hover:underline">
+                              <ActionButton action={markReimbursedAction} fields={{ id: e.id, reimbursed_on: today }} className="text-xs text-teal-700 hover:underline">
                                 Paid back
                               </ActionButton>
                             </span>
@@ -163,10 +163,10 @@ export default async function PartnersPage() {
                   <tr key={p.id}>
                     <td>{dmy(p.paid_on)}</td>
                     <td>{nameOf(team, p.profile_id)}</td>
-                    <td className="hidden text-white/60 sm:table-cell">{p.notes}</td>
+                    <td className="hidden text-ink-soft sm:table-cell">{p.notes}</td>
                     <td className="text-right tabular-nums">{aud(p.amount)}</td>
                     <td className="w-10 text-right">
-                      <ActionButton action={deletePayoutAction} fields={{ id: p.id }} confirm="Delete this payout record?" className="rounded-lg p-1.5 text-white/40 hover:text-red-300">
+                      <ActionButton action={deletePayoutAction} fields={{ id: p.id }} confirm="Delete this payout record?" className="rounded-lg p-1.5 text-slate-500 hover:text-red-700">
                         <Trash2 size={15} />
                       </ActionButton>
                     </td>
@@ -178,8 +178,8 @@ export default async function PartnersPage() {
         )}
       </Card>
 
-      <Disclosure label="How these numbers work" buttonClassName="mt-6 text-sm text-white/50 hover:text-white">
-        <ul className="list-disc space-y-1.5 pl-5 text-sm text-white/70">
+      <Disclosure label="How these numbers work" buttonClassName="mt-6 text-sm text-slate-500 hover:text-ocean">
+        <ul className="list-disc space-y-1.5 pl-5 text-sm text-ink-soft">
           <li>Profit = money actually received from clients − all expenses (cash basis). Unpaid invoices aren&apos;t profit yet.</li>
           <li>Each partner&apos;s share is exactly one third of profit, no matter who worked which jobs.</li>
           <li>Expenses a partner paid personally still reduce profit, and are owed back to that partner on top of their share.</li>
@@ -194,8 +194,8 @@ export default async function PartnersPage() {
 function Row({ k, v, strong, warn }: { k: string; v: string; strong?: boolean; warn?: boolean }) {
   return (
     <div className="flex justify-between gap-2">
-      <dt className="text-white/60">{k}</dt>
-      <dd className={`tabular-nums ${strong ? "font-semibold text-white" : ""} ${warn ? "text-amber-300" : ""}`}>{v}</dd>
+      <dt className="text-ink-soft">{k}</dt>
+      <dd className={`tabular-nums ${strong ? "font-semibold text-ocean" : ""} ${warn ? "text-amber-700" : ""}`}>{v}</dd>
     </div>
   );
 }

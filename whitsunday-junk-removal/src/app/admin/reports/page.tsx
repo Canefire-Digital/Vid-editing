@@ -81,11 +81,11 @@ export default async function ReportsPage({ searchParams }: PageProps<"/admin/re
             <FileDown size={18} /> Payouts CSV
           </a>
         </div>
-        <div className="mt-4 border-t border-white/5 pt-4">
+        <div className="mt-4 border-t border-line pt-4">
           <ReceiptsZip items={zipItems} filename={`wjr-receipts-fy${startYear}-${String(startYear + 1).slice(2)}.zip`} />
         </div>
         {r.missingReceipts.length > 0 && (
-          <p className="mt-3 text-sm text-amber-200">
+          <p className="mt-3 text-sm text-amber-900">
             {r.missingReceipts.length} expense{r.missingReceipts.length === 1 ? "" : "s"} ({aud(sum(r.missingReceipts, (e) => e.amount))}) have no receipt.{" "}
             <Link href="/admin/expenses?flag=noreceipt&period=all" className="underline">
               Review
@@ -101,17 +101,17 @@ export default async function ReportsPage({ searchParams }: PageProps<"/admin/re
               <li key={c.key}>
                 <div className="flex justify-between text-sm">
                   <span>
-                    {c.label} <span className="text-white/40">({c.count})</span>
+                    {c.label} <span className="text-slate-500">({c.count})</span>
                   </span>
                   <span className="tabular-nums">{aud(c.total)}</span>
                 </div>
-                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full rounded-full bg-teal-400" style={{ width: `${r.totals.expenses ? (c.total / r.totals.expenses) * 100 : 0}%` }} />
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-full rounded-full bg-teal-600" style={{ width: `${r.totals.expenses ? (c.total / r.totals.expenses) * 100 : 0}%` }} />
                 </div>
               </li>
             ))}
           </ul>
-          <div className="mt-3 flex justify-between border-t border-white/10 pt-3 font-semibold">
+          <div className="mt-3 flex justify-between border-t border-line pt-3 font-semibold">
             <span>Total</span>
             <span className="tabular-nums">{aud(r.totals.expenses)}</span>
           </div>
@@ -136,21 +136,21 @@ export default async function ReportsPage({ searchParams }: PageProps<"/admin/re
                     <td className="text-right tabular-nums">{aud(p.fyShare)}</td>
                     <td className="text-right tabular-nums">{aud(p.fyPayouts)}</td>
                     <td className="text-right tabular-nums">{aud(p.fyReimbursed)}</td>
-                    <td className="text-right tabular-nums text-amber-200">{aud(p.taxSetAside)}</td>
+                    <td className="text-right tabular-nums text-amber-900">{aud(p.taxSetAside)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </TableWrap>
           {r.outstandingAtEnd.length > 0 && (
-            <p className="mt-3 text-sm text-white/60">
+            <p className="mt-3 text-sm text-ink-soft">
               {r.outstandingAtEnd.length} invoice{r.outstandingAtEnd.length === 1 ? " was" : "s were"} unpaid at 30 June ({aud(sum(r.outstandingAtEnd, (i) => i.balance))}) — not counted as income for this year.
             </p>
           )}
         </Card>
       </div>
 
-      <p className="mt-6 text-xs text-white/40">
+      <p className="mt-6 text-xs text-slate-500">
         Records are kept indefinitely in the database and receipts are never deleted from storage. The ATO requires 5 years — keep the Supabase project on a paid plan (or export
         these files each year) so nothing is lost.
       </p>

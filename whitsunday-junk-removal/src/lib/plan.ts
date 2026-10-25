@@ -74,12 +74,12 @@ export function weekStart(iso: string): string {
 
 // Distinct, readable on navy. Fill + text colour.
 export const SEGMENT_COLOURS = [
-  { fill: "#2dd4bf", text: "#042f2e" },
-  { fill: "#38bdf8", text: "#082f49" },
-  { fill: "#a78bfa", text: "#2e1065" },
+  { fill: "#0f766e", text: "#ffffff" },
+  { fill: "#0ea5e9", text: "#ffffff" },
+  { fill: "#7c3aed", text: "#ffffff" },
   { fill: "#fbbf24", text: "#451a03" },
   { fill: "#f472b6", text: "#500724" },
-  { fill: "#a3e635", text: "#1a2e05" },
+  { fill: "#65a30d", text: "#ffffff" },
   { fill: "#fb923c", text: "#431407" },
-  { fill: "#e2e8f0", text: "#0f172a" },
+  { fill: "#475569", text: "#ffffff" },
 ];

@@ -34,13 +34,13 @@ export function ReceiptsZip({ items, filename }: { items: Item[]; filename: stri
     setProgress(failed ? `Done — ${failed} file(s) couldn't be fetched. Refresh the page and try again.` : null);
   }
 
-  if (!items.length) return <span className="text-sm text-white/50">No receipts uploaded for this year.</span>;
+  if (!items.length) return <span className="text-sm text-slate-500">No receipts uploaded for this year.</span>;
   return (
     <div>
       <button type="button" className="btn btn-ghost" onClick={run} disabled={!!progress && progress !== null && !progress.startsWith("Done")}>
         <Archive size={18} /> {progress && !progress.startsWith("Done") ? progress : `Download all ${items.length} receipts (.zip)`}
       </button>
-      {progress?.startsWith("Done") && <p className="mt-1 text-xs text-amber-300">{progress}</p>}
+      {progress?.startsWith("Done") && <p className="mt-1 text-xs text-amber-700">{progress}</p>}
     </div>
   );
 }

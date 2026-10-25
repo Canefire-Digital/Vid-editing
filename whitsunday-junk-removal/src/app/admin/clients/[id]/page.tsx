@@ -43,7 +43,7 @@ export default async function ClientPage({ params }: PageProps<"/admin/clients/[
           <span className="flex flex-wrap items-center gap-2">
             <ClientTypeBadge type={client.type} />
             {client.payment_terms_days === 0 ? "Due on receipt" : `${client.payment_terms_days}-day terms`}
-            {client.archived && <span className="text-amber-300">· Archived</span>}
+            {client.archived && <span className="text-amber-700">· Archived</span>}
           </span>
         }
         back={{ href: "/admin/clients", label: "Clients" }}
@@ -109,10 +109,10 @@ export default async function ClientPage({ params }: PageProps<"/admin/clients/[
                       <tr key={j.id}>
                         <td className="whitespace-nowrap">{dmy(j.job_date)}</td>
                         <td>
-                          <Link href={`/admin/jobs/${j.id}`} className="font-medium hover:text-teal-300">
+                          <Link href={`/admin/jobs/${j.id}`} className="font-medium hover:text-teal-800">
                             #{j.job_number} · {LOAD_SIZES[j.load_size]}
                           </Link>
-                          {j.address && <div className="text-xs text-white/50">{j.address}</div>}
+                          {j.address && <div className="text-xs text-slate-500">{j.address}</div>}
                         </td>
                         <td>
                           <JobStatusBadge status={j.status} />
@@ -145,7 +145,7 @@ export default async function ClientPage({ params }: PageProps<"/admin/clients/[
                     {invoices.map((i) => (
                       <tr key={i.id}>
                         <td>
-                          <Link href={`/admin/invoices/${i.id}`} className="font-medium hover:text-teal-300">
+                          <Link href={`/admin/invoices/${i.id}`} className="font-medium hover:text-teal-800">
                             {i.invoice_number}
                           </Link>
                         </td>

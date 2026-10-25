@@ -55,7 +55,7 @@ export default async function InvoicesPage({ searchParams }: PageProps<"/admin/i
       </div>
 
       {overdue.length > 0 && tab !== "overdue" && (
-        <Link href="/admin/invoices?tab=overdue" className="mb-4 flex items-center gap-2 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+        <Link href="/admin/invoices?tab=overdue" className="mb-4 flex items-center gap-2 rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
           <AlertTriangle size={18} /> {overdue.length} overdue invoice{overdue.length === 1 ? "" : "s"} — tap to chase them up.
         </Link>
       )}
@@ -65,7 +65,7 @@ export default async function InvoicesPage({ searchParams }: PageProps<"/admin/i
           <Link
             key={t.key}
             href={`/admin/invoices?tab=${t.key}`}
-            className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium ${tab === t.key ? "bg-teal-400 text-navy-950" : "bg-white/5 text-white/70 hover:bg-white/10"}`}
+            className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium ${tab === t.key ? "bg-ocean text-white" : "bg-white text-ink-soft ring-1 ring-line hover:text-teal-700"}`}
           >
             {t.label}
           </Link>
@@ -93,15 +93,15 @@ export default async function InvoicesPage({ searchParams }: PageProps<"/admin/i
                   return (
                     <tr key={i.id}>
                       <td>
-                        <Link href={`/admin/invoices/${i.id}`} className="font-semibold hover:text-teal-300">
+                        <Link href={`/admin/invoices/${i.id}`} className="font-semibold hover:text-teal-800">
                           {i.invoice_number}
                         </Link>
-                        <div className="text-xs text-white/45">{dmy(i.issue_date)}</div>
+                        <div className="text-xs text-slate-500">{dmy(i.issue_date)}</div>
                       </td>
                       <td className="max-w-[10rem] truncate">{i.client_name}</td>
                       <td className="hidden whitespace-nowrap sm:table-cell">
                         {dmy(i.due_date)}
-                        {late > 0 && <div className="text-xs text-red-300">{late} days late</div>}
+                        {late > 0 && <div className="text-xs text-red-700">{late} days late</div>}
                       </td>
                       <td>
                         <InvoiceStatusBadge status={i.display_status} />

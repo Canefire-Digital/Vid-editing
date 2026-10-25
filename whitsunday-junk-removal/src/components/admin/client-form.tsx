@@ -36,7 +36,7 @@ export function ClientForm({ action, client, defaultTerms, hidden = {}, submitLa
               <label
                 key={t}
                 className={`cursor-pointer rounded-xl border px-3 py-2.5 text-center text-sm font-medium transition ${
-                  type === t ? "border-teal-400 bg-teal-400/15 text-teal-200" : "border-white/10 bg-white/5 text-white/70"
+                  type === t ? "border-teal-700 bg-teal-700/10 text-teal-800" : "border-line bg-slate-100 text-ink-soft"
                 }`}
               >
                 <input
@@ -81,7 +81,7 @@ export function ClientForm({ action, client, defaultTerms, hidden = {}, submitLa
               setTerms(Number(e.target.value));
             }}
           />
-          <span className="mt-1 block text-xs text-white/45">0 = due on receipt</span>
+          <span className="mt-1 block text-xs text-slate-500">0 = due on receipt</span>
         </label>
         <label className="block md:col-span-2">
           <span className="label">Address</span>
@@ -93,7 +93,7 @@ export function ClientForm({ action, client, defaultTerms, hidden = {}, submitLa
         </label>
         {client?.id && (
           <label className="flex items-center gap-2 text-sm md:col-span-2">
-            <input type="checkbox" name="archived" defaultChecked={client.archived} className="h-4 w-4 accent-teal-400" />
+            <input type="checkbox" name="archived" defaultChecked={client.archived} className="h-4 w-4 accent-teal-700" />
             Archived (hide from pick lists)
           </label>
         )}

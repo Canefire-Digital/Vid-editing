@@ -42,11 +42,11 @@ export default async function InvoicePage({ params }: PageProps<"/admin/invoices
         }
         subtitle={
           <>
-            <Link href={`/admin/clients/${client.id}`} className="text-teal-300 hover:underline">
+            <Link href={`/admin/clients/${client.id}`} className="text-teal-700 hover:underline">
               {client.name}
             </Link>{" "}
             · issued {dmy(invoice.issue_date)} · {invoice.payment_terms_days === 0 ? "due on receipt" : `due ${dmy(invoice.due_date)}`}
-            {late > 0 && <span className="text-red-300"> · {late} days overdue</span>}
+            {late > 0 && <span className="text-red-700"> · {late} days overdue</span>}
           </>
         }
         back={{ href: "/admin/invoices", label: "Invoices" }}
@@ -78,7 +78,7 @@ export default async function InvoicePage({ params }: PageProps<"/admin/invoices
           {invoice.status !== "void" && (
             <Card title={invoice.sent_at ? "Send again" : "Send to client"}>
               {bankMissing && (
-                <p className="mb-3 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-sm text-amber-200">
+                <p className="mb-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
                   Bank details aren&apos;t set yet, so the invoice won&apos;t show how to pay.{" "}
                   <Link href="/admin/settings" className="underline">
                     Add them in Settings
@@ -87,7 +87,7 @@ export default async function InvoicePage({ params }: PageProps<"/admin/invoices
                 </p>
               )}
               {invoice.sent_at && (
-                <p className="mb-3 text-sm text-white/55">
+                <p className="mb-3 text-sm text-slate-500">
                   Last emailed {dateTime(invoice.sent_at)}
                   {invoice.sent_to && <> to {invoice.sent_to}</>}
                 </p>
@@ -106,8 +106,8 @@ export default async function InvoicePage({ params }: PageProps<"/admin/invoices
                 </div>
               </ActionForm>
               {invoice.status === "draft" && (
-                <div className="mt-3 border-t border-white/5 pt-3">
-                  <ActionButton action={markSentAction} fields={{ id }} className="text-sm text-white/60 hover:text-white">
+                <div className="mt-3 border-t border-line pt-3">
+                  <ActionButton action={markSentAction} fields={{ id }} className="text-sm text-ink-soft hover:text-ocean">
                     Sent it another way? Mark as sent →
                   </ActionButton>
                 </div>
@@ -116,13 +116,13 @@ export default async function InvoicePage({ params }: PageProps<"/admin/invoices
           )}
 
           <Card title="Line items">
-            <ul className="divide-y divide-white/5 text-sm">
+            <ul className="divide-y divide-line text-sm">
               {items.map((it) => (
                 <li key={it.id} className="flex justify-between gap-4 py-2.5">
                   <span className="whitespace-pre-wrap">
                     {it.description}
                     {Number(it.quantity) !== 1 && (
-                      <span className="text-white/50">
+                      <span className="text-slate-500">
                         {" "}
                         × {Number(it.quantity)} @ {aud(it.unit_price)}
                       </span>
@@ -132,13 +132,13 @@ export default async function InvoicePage({ params }: PageProps<"/admin/invoices
                 </li>
               ))}
             </ul>
-            <div className="mt-2 space-y-1 border-t border-white/10 pt-3 text-sm">
-              <div className="flex justify-between text-white/60">
+            <div className="mt-2 space-y-1 border-t border-line pt-3 text-sm">
+              <div className="flex justify-between text-ink-soft">
                 <span>Subtotal</span>
                 <span className="tabular-nums">{aud(invoice.subtotal)}</span>
               </div>
               {invoice.gst_enabled && (
-                <div className="flex justify-between text-white/60">
+                <div className="flex justify-between text-ink-soft">
                   <span>GST ({Number(invoice.gst_rate)}%)</span>
                   <span className="tabular-nums">{aud(invoice.gst_amount)}</span>
                 </div>
@@ -148,7 +148,7 @@ export default async function InvoicePage({ params }: PageProps<"/admin/invoices
                 <span className="tabular-nums">{aud(invoice.total)}</span>
               </div>
             </div>
-            {invoice.notes && <p className="mt-4 whitespace-pre-wrap text-sm text-white/60">{invoice.notes}</p>}
+            {invoice.notes && <p className="mt-4 whitespace-pre-wrap text-sm text-ink-soft">{invoice.notes}</p>}
           </Card>
         </div>
 
@@ -157,17 +157,17 @@ export default async function InvoicePage({ params }: PageProps<"/admin/invoices
             {payments.length === 0 ? (
               <Empty>No payments yet.</Empty>
             ) : (
-              <ul className="mb-3 divide-y divide-white/5 text-sm">
+              <ul className="mb-3 divide-y divide-line text-sm">
                 {payments.map((p) => (
                   <li key={p.id} className="flex items-center justify-between gap-2 py-2.5">
                     <div>
                       <div className="font-semibold tabular-nums">{aud(p.amount)}</div>
-                      <div className="text-xs text-white/50">
+                      <div className="text-xs text-slate-500">
                         {dmy(p.paid_on)} · {PAYMENT_METHODS[p.method]} · by {nameOf(team, p.created_by)}
                         {p.reference && <> · {p.reference}</>}
                       </div>
                     </div>
-                    <ActionButton action={deletePaymentAction} fields={{ id: p.id }} confirm="Remove this payment?" className="rounded-lg p-2 text-white/40 hover:text-red-300">
+                    <ActionButton action={deletePaymentAction} fields={{ id: p.id }} confirm="Remove this payment?" className="rounded-lg p-2 text-slate-500 hover:text-red-700">
                       <Trash2 size={15} />
                     </ActionButton>
                   </li>
@@ -191,7 +191,7 @@ export default async function InvoicePage({ params }: PageProps<"/admin/invoices
                       <span className="label">Method</span>
                       <div className="grid grid-cols-2 gap-2">
                         {Object.entries(PAYMENT_METHODS).map(([k, v], idx) => (
-                          <label key={k} className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm has-checked:border-teal-400 has-checked:bg-teal-400/15">
+                          <label key={k} className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line bg-slate-100 px-3 py-2.5 text-sm has-checked:border-teal-700 has-checked:bg-teal-700/10">
                             <input type="radio" name="method" value={k} defaultChecked={idx === 0} className="sr-only" />
                             {v}
                           </label>
@@ -210,7 +210,7 @@ export default async function InvoicePage({ params }: PageProps<"/admin/invoices
 
           {invoice.job_id && (
             <Card>
-              <Link href={`/admin/jobs/${invoice.job_id}`} className="text-sm text-teal-300 hover:underline">
+              <Link href={`/admin/jobs/${invoice.job_id}`} className="text-sm text-teal-700 hover:underline">
                 View linked job →
               </Link>
             </Card>
