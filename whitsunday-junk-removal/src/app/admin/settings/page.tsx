@@ -1,6 +1,7 @@
 import { ActionForm } from "@/components/admin/forms";
 import { Card, PageHeader } from "@/components/admin/ui";
 import { getSettings, getTeam } from "@/lib/auth";
+import { payloadKg, SURCHARGES, trailerM3 } from "@/lib/junk-pricing";
 import { changePasswordAction, saveProfileAction, saveSettingsAction } from "./actions";
 
 export const metadata = { title: "Settings" };
@@ -18,6 +19,14 @@ function Input({ label, name, value, type = "text", hint, ...rest }: { label: st
 export default async function SettingsPage() {
   const { me } = await getTeam();
   const s = await getSettings();
+  const trailer = {
+    lengthM: Number(s.trailer_length_m),
+    widthM: Number(s.trailer_width_m),
+    heightM: Number(s.trailer_height_m),
+    atmKg: Number(s.trailer_atm_kg),
+    tareKg: s.trailer_tare_kg,
+  };
+  const payload = payloadKg(trailer);
   const preview = `${s.invoice_prefix}${String(s.invoice_next_number).padStart(s.invoice_number_padding, "0")}`;
 
   return (
@@ -65,6 +74,44 @@ export default async function SettingsPage() {
             <Input label="Quarter load" name="price_quarter" value={s.price_quarter} inputMode="decimal" />
           </div>
           <p className="mt-2 text-xs text-slate-500">These also show on the public website pricing section.</p>
+        </Card>
+
+        <Card title="Trailer & tip fees (website price calculator)">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <Input label="Length (m)" name="trailer_length_m" value={s.trailer_length_m} inputMode="decimal" />
+            <Input label="Width (m)" name="trailer_width_m" value={s.trailer_width_m} inputMode="decimal" />
+            <Input label="Load height (m)" name="trailer_height_m" value={s.trailer_height_m} inputMode="decimal" hint="Top of the cage" />
+            <Input label="ATM (kg)" name="trailer_atm_kg" value={s.trailer_atm_kg} inputMode="numeric" hint="From the compliance plate" />
+            <Input label="Tare (kg)" name="trailer_tare_kg" value={s.trailer_tare_kg} inputMode="numeric" hint="Empty weight, on the plate" />
+          </div>
+          <p className="mt-2 text-sm text-ink-soft">
+            Full load = <strong className="text-ocean">{trailerM3(trailer).toFixed(1)} m³</strong>
+            {payload !== null ? (
+              <>
+                {" "}· payload <strong className="text-ocean">{payload.toLocaleString()} kg</strong> (ATM − tare)
+              </>
+            ) : (
+              <> · add the tare weight so the calculator can warn about overweight loads</>
+            )}
+          </p>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <Input label="Tip rate ($ per tonne)" name="tip_rate_per_tonne" value={s.tip_rate_per_tonne} inputMode="decimal" hint="Council commercial weighbridge rate" />
+            <Input
+              label="Tip weight included in a full-load price (kg)"
+              name="tip_included_kg_full_load"
+              value={s.tip_included_kg_full_load}
+              inputMode="numeric"
+              hint="Heavier loads pay the extra at the tip rate. Leave blank for no weight surcharge."
+            />
+          </div>
+          <p className="mb-2 mt-5 text-sm font-semibold text-ocean">Per-item tip fees (on top of the load price)</p>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {SURCHARGES.map((f) => (
+              <Input key={f.key} label={`${f.label} ($)`} name={`fee_${f.key}`} value={s.tip_item_fees?.[f.key] ?? null} inputMode="decimal" hint={f.hint} />
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-slate-500">Blank = shown on the website as “confirmed on quote”. Enter 0 if the tip takes it free.</p>
         </Card>
 
         <Card title="Website & reviews">

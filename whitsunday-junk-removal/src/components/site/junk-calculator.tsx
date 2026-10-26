@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import {
-  AlertCircle,
   Armchair,
   ArrowRight,
   Boxes,
   Hammer,
   Minus,
   Plus,
+  Scale,
   RotateCcw,
   Sprout,
   WashingMachine,
@@ -21,11 +21,14 @@ import {
   PREFILL_EVENT,
   estimate,
   quoteLoadOption,
+  trailerM3,
   type CategoryKey,
+  type PricingConfig,
   type Prefill,
-  type Prices,
 } from "@/lib/junk-pricing";
 import { LiveTrailer } from "./live-trailer";
+
+const HEAVY_KG = 1000;
 
 const ICONS: Record<CategoryKey, LucideIcon> = {
   furniture: Armchair,
@@ -35,26 +38,28 @@ const ICONS: Record<CategoryKey, LucideIcon> = {
   reno: Hammer,
 };
 
-export function JunkCalculator({ prices }: { prices: Prices }) {
+export function JunkCalculator({ pricing }: { pricing: PricingConfig }) {
   const [tab, setTab] = useState<CategoryKey>("furniture");
   const [counts, setCounts] = useState<Record<string, number>>({});
 
+  const est = estimate(counts, pricing);
+  const cap = trailerM3(pricing.trailer);
   const chosen = ITEMS.filter((i) => counts[i.id]);
-  const share = chosen.reduce((a, i) => a + i.share * counts[i.id], 0);
-  const est = estimate(share, prices);
-  const surcharge = chosen.some((i) => i.surcharge);
-  const loadsNeeded = Math.max(1, Math.ceil(share - 1e-9));
-  const shownShare = share > 1 ? share - (loadsNeeded - 1) : share;
   const itemCount = chosen.reduce((a, i) => a + counts[i.id], 0);
+  const loadsNeeded = est.tripsBySpace;
+  const shownShare = est.share > 1 ? est.share - (loadsNeeded - 1) : est.share;
+  const overPayload = est.tripsByWeight !== null && est.tripsByWeight > est.tripsBySpace;
+  // Until the trailer's tare weight is set, flag anything over a tonne for a weight check.
+  const heavy = overPayload || (est.tripsByWeight === null && est.kg > HEAVY_KG);
 
   // One coloured block per category in the trailer (the last trailer when it's more than one load)
   const byCat = CATEGORIES.map((c) => ({
-      key: c.key,
-      colour: c.colour,
-      label: c.label.split(" ")[0],
-      share: chosen.filter((i) => i.category === c.key).reduce((a, i) => a + i.share * counts[i.id], 0),
+    key: c.key,
+    colour: c.colour,
+    label: c.label.split(" ")[0],
+    share: chosen.filter((i) => i.category === c.key).reduce((a, i) => a + i.m3 * counts[i.id], 0) / cap,
   })).filter((b) => b.share > 0);
-  const blocks = share <= 1 ? byCat : byCat.map((b) => ({ ...b, share: (b.share * shownShare) / share }));
+  const blocks = est.share <= 1 ? byCat : byCat.map((b) => ({ ...b, share: (b.share * shownShare) / est.share }));
 
   const bump = (id: string, d: number) =>
     setCounts((c) => {
@@ -69,7 +74,7 @@ export function JunkCalculator({ prices }: { prices: Prices }) {
     const list = chosen.map((i) => `${counts[i.id]} × ${i.name}`).join(", ");
     const detail: Prefill = {
       load: quoteLoadOption(est),
-      message: `From the price calculator: ${list}. Estimate: ${est.label} (${aud(est.price, true)}).`,
+      message: `From the price calculator: ${list}. About ${est.m3.toFixed(1)} m³ / ${Math.round(est.kg)} kg. Estimate: ${est.label} — ${aud(est.total, true)}${est.itemFeesPending ? " + tip fees to confirm" : ""}.`,
     };
     window.dispatchEvent(new CustomEvent(PREFILL_EVENT, { detail }));
     document.getElementById("quote")?.scrollIntoView({ behavior: "smooth" });
@@ -117,12 +122,8 @@ export function JunkCalculator({ prices }: { prices: Prices }) {
                   <span className="min-w-0">
                     <span className="block truncate text-sm font-semibold text-ink">{item.name}</span>
                     <span className="flex items-center gap-1 text-xs text-ink-soft">
-                      ~{Math.round(item.share * 100)}% of a trailer
-                      {item.surcharge && (
-                        <span className="text-amber-700" title="Tip fees for this item are higher">
-                          · tip surcharge
-                        </span>
-                      )}
+                      ~{item.m3 < 0.1 ? item.m3.toFixed(2) : item.m3.toFixed(1)} m³ · {item.kg} kg
+                      {item.surcharge && <span className="text-amber-700">· tip fee</span>}
                     </span>
                   </span>
                   <span className="flex shrink-0 items-center gap-1.5">
@@ -151,16 +152,16 @@ export function JunkCalculator({ prices }: { prices: Prices }) {
               );
             })}
           </ul>
-          <p className="mt-3 text-xs text-ink-soft">
-            Can&apos;t see it? Add the closest match, or just describe it in the quote form — we&apos;ll price it properly.
-          </p>
+          <p className="mt-3 text-xs text-ink-soft">Can&apos;t see it? Add the closest match, or describe it in the quote form.</p>
         </div>
 
         {/* Live result */}
-        <div className="lg:sticky lg:top-28 lg:self-start">
+        <div className="lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-[1.5rem] border border-line bg-white p-5">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-ink-soft">Your trailer</span>
+              <span className="text-sm font-semibold text-ink-soft">
+                Our 12×6 ft trailer · {cap.toFixed(1)} m³
+              </span>
               {itemCount > 0 && (
                 <button type="button" onClick={() => setCounts({})} className="flex items-center gap-1 text-xs font-semibold text-ink-soft hover:text-teal-700">
                   <RotateCcw size={13} /> Start again
@@ -168,29 +169,44 @@ export function JunkCalculator({ prices }: { prices: Prices }) {
               )}
             </div>
             <LiveTrailer className="mt-2" blocks={blocks} />
-            {share > 1 && (
+            {est.share > 1 && (
               <p className="-mt-1 text-center text-xs font-semibold text-teal-700">
                 Showing load {loadsNeeded} of {loadsNeeded} — the first {loadsNeeded - 1 === 1 ? "is" : `${loadsNeeded - 1} are`} full
               </p>
             )}
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {blocks.map((b) => (
-                <span key={b.key} className="flex items-center gap-1 text-xs text-ink-soft">
-                  <span className="h-2.5 w-2.5 rounded-sm" style={{ background: b.colour }} /> {CATEGORIES.find((c) => c.key === b.key)?.label}
-                </span>
-              ))}
+
+            <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+              <Metric label="Space" value={itemCount ? `${Math.round(est.share * 100)}%` : "—"} />
+              <Metric label="Volume" value={itemCount ? `${est.m3.toFixed(1)} m³` : "—"} />
+              <Metric label="Weight" value={itemCount ? `${Math.round(est.kg)} kg` : "—"} />
             </div>
 
-            <div className="mt-5 border-t border-line pt-4">
-              <div className="text-sm text-ink-soft">{itemCount ? `${itemCount} item${itemCount === 1 ? "" : "s"} · ${Math.round(share * 100)}% of a trailer` : "Add items to see your price"}</div>
-              <div className="mt-1 flex items-end justify-between gap-2">
-                <div className="font-display text-xl font-bold text-ink">{est.label}</div>
-                <div className="font-display text-4xl font-extrabold tabular-nums tracking-tight text-ocean">{itemCount ? aud(est.price, true) : "—"}</div>
+            <div className="mt-4 border-t border-line pt-4">
+              {itemCount ? (
+                <dl className="space-y-1.5 text-sm">
+                  <Line k={est.label} v={aud(est.loadPrice, true)} />
+                  {est.weightCharge > 0 && <Line k="Heavy load (extra tip weight)" v={aud(est.weightCharge, true)} />}
+                  {est.itemFees.map((f) => (
+                    <Line key={f.key} k={`${f.count} × ${f.label} tip fee`} v={f.each === null ? "on quote" : aud(f.each * f.count, true)} muted={f.each === null} />
+                  ))}
+                </dl>
+              ) : (
+                <p className="text-sm text-ink-soft">Add items to see your price.</p>
+              )}
+              <div className="mt-3 flex items-end justify-between gap-2 border-t border-line pt-3">
+                <span className="font-display text-lg font-bold text-ink">Estimate</span>
+                <span className="font-display text-4xl font-extrabold tabular-nums tracking-tight text-ocean">
+                  {itemCount ? aud(est.total, true) : "—"}
+                  {itemCount > 0 && est.itemFeesPending && <span className="align-top text-base text-amber-700">*</span>}
+                </span>
               </div>
-              {surcharge && (
+              {est.itemFeesPending && <p className="mt-1 text-right text-xs text-amber-700">* plus tip fees for flagged items, confirmed on your quote</p>}
+              {heavy && (
                 <p className="mt-3 flex gap-2 rounded-xl bg-amber-50 p-2.5 text-xs text-amber-800">
-                  <AlertCircle size={15} className="mt-0.5 shrink-0" />
-                  Some items cost more at the tip (e.g. mattresses, tyres, fridges). We&apos;ll confirm any extra before we start.
+                  <Scale size={15} className="mt-0.5 shrink-0" />
+                  {overPayload
+                    ? `That's about ${Math.round(est.kg)} kg — over our trailer's legal payload, so it needs ${est.tripsByWeight} trips by weight. We'll confirm the price.`
+                    : `That's a heavy load (about ${Math.round(est.kg)} kg). Tip fees are charged by weight, so we'll confirm the price.`}
                 </p>
               )}
               <button type="button" onClick={book} disabled={!itemCount} className="btn btn-sun mt-4 w-full text-base">
@@ -201,6 +217,24 @@ export function JunkCalculator({ prices }: { prices: Prices }) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl bg-paper px-2 py-2">
+      <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-soft">{label}</div>
+      <div className="font-display text-lg font-bold tabular-nums text-ocean">{value}</div>
+    </div>
+  );
+}
+
+function Line({ k, v, muted }: { k: string; v: string; muted?: boolean }) {
+  return (
+    <div className="flex justify-between gap-3">
+      <dt className="text-ink-soft">{k}</dt>
+      <dd className={`tabular-nums font-semibold ${muted ? "text-amber-700" : "text-ink"}`}>{v}</dd>
     </div>
   );
 }

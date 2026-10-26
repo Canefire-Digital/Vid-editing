@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getSettings, getTeam } from "@/lib/auth";
 import { bool, num, str } from "@/lib/form";
+import { SURCHARGES } from "@/lib/junk-pricing";
 import type { ActionResult } from "@/lib/types";
 
 export async function saveSettingsAction(_prev: ActionResult, fd: FormData): Promise<ActionResult> {
@@ -55,11 +56,34 @@ export async function saveSettingsAction(_prev: ActionResult, fd: FormData): Pro
       insured: bool(fd, "insured"),
       insurance_note: str(fd, "insurance_note"),
       business_hours: str(fd, "business_hours"),
+      trailer_length_m: positive(num(fd, "trailer_length_m"), current.trailer_length_m),
+      trailer_width_m: positive(num(fd, "trailer_width_m"), current.trailer_width_m),
+      trailer_height_m: positive(num(fd, "trailer_height_m"), current.trailer_height_m),
+      trailer_atm_kg: Math.round(positive(num(fd, "trailer_atm_kg"), current.trailer_atm_kg)),
+      trailer_tare_kg: optionalWhole(num(fd, "trailer_tare_kg")),
+      tip_rate_per_tonne: optionalMoney(num(fd, "tip_rate_per_tonne")),
+      tip_included_kg_full_load: optionalWhole(num(fd, "tip_included_kg_full_load")),
+      tip_item_fees: Object.fromEntries(
+        SURCHARGES.flatMap((s) => {
+          const v = optionalMoney(num(fd, `fee_${s.key}`));
+          return v === null ? [] : [[s.key, v]];
+        }),
+      ),
     })
     .eq("id", 1);
   if (error) return { error: error.message };
   revalidatePath("/", "layout");
   return { ok: "Settings saved." };
+}
+
+function positive(v: number | null, fallback: number): number {
+  return v !== null && v > 0 ? v : Number(fallback);
+}
+function optionalWhole(v: number | null): number | null {
+  return v !== null && v >= 0 ? Math.round(v) : null;
+}
+function optionalMoney(v: number | null): number | null {
+  return v !== null && v >= 0 ? Math.round(v * 100) / 100 : null;
 }
 
 function httpsOrNull(v: string | null): string | null {

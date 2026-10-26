@@ -14,7 +14,7 @@ const STEPS = [
 ] as const;
 
 /** Drag-to-price card in the hero. */
-export function HeroPrice({ prices }: { prices: Prices }) {
+export function HeroPrice({ prices, capacityM3 }: { prices: Prices; capacityM3: number }) {
   const [i, setI] = useState(1);
   const step = STEPS[i];
   const share = (i + 1) / 4;
@@ -32,7 +32,9 @@ export function HeroPrice({ prices }: { prices: Prices }) {
 
       <div className="mt-1 flex items-end justify-between gap-3">
         <div>
-          <div className="text-sm text-white/70">{step.label}</div>
+          <div className="text-sm text-white/70">
+            {step.label} · {(capacityM3 * share).toFixed(1)} m³
+          </div>
           <div className="font-display text-5xl font-extrabold tabular-nums tracking-tight">{aud(prices[step.key], true)}</div>
         </div>
         <p className="max-w-[12rem] text-right text-xs text-white/70">{step.hint}</p>

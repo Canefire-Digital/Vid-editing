@@ -9,7 +9,7 @@ Next.js 16 · Supabase (database, logins, photo/receipt storage) · Netlify · R
 
 1. Create a project at [supabase.com](https://supabase.com). Region: **Sydney**.
 2. **SQL Editor → New query** → paste all of `supabase/migrations/0001_init.sql` → **Run**.
-   Then do the same with `0002_planner.sql` and `0003_site_extras.sql` (always in number order).
+   Then do the same with `0002_planner.sql`, `0003_site_extras.sql` and `0004_trailer_and_tip_fees.sql` (always in number order).
 3. **Authentication → Sign In / Providers → Email**: turn **"Allow new users to sign up" OFF**.
    (Nobody can create an account from outside — you add the three of you by hand.)
 4. **Authentication → Users → Add user → Create new user** — once each for Alex, Lucas and Kobi.

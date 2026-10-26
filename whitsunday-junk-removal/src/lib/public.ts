@@ -1,4 +1,5 @@
 import "server-only";
+import { DEFAULT_TRAILER, type PricingConfig } from "./junk-pricing";
 import { createAdminClient } from "./supabase/server";
 
 export type PublicInfo = {
@@ -12,6 +13,7 @@ export type PublicInfo = {
   insuranceNote: string | null;
   hours: string | null;
   gallery: { before: string; after: string; suburb: string | null }[];
+  pricing: PricingConfig;
 };
 
 const FALLBACK: PublicInfo = {
@@ -25,6 +27,13 @@ const FALLBACK: PublicInfo = {
   insuranceNote: null,
   hours: null,
   gallery: [],
+  pricing: {
+    prices: { full: 650, three_quarter: 500, half: 330, quarter: 180 },
+    trailer: DEFAULT_TRAILER,
+    tipRatePerTonne: null,
+    includedKgFullLoad: null,
+    itemFees: {},
+  },
 };
 
 /** Public-safe business details for the marketing site (never bank details). */
@@ -34,7 +43,7 @@ export async function getPublicInfo(): Promise<PublicInfo> {
     const admin = createAdminClient();
     const { data } = await admin
       .from("settings")
-      .select("business_name, phone, email, abn, price_full, price_three_quarter, price_half, price_quarter, google_profile_url, insured, insurance_note, business_hours")
+      .select("business_name, phone, email, abn, price_full, price_three_quarter, price_half, price_quarter, google_profile_url, insured, insurance_note, business_hours, trailer_length_m, trailer_width_m, trailer_height_m, trailer_atm_kg, trailer_tare_kg, tip_rate_per_tonne, tip_included_kg_full_load, tip_item_fees")
       .eq("id", 1)
       .single();
     if (!data) return FALLBACK;
@@ -54,6 +63,24 @@ export async function getPublicInfo(): Promise<PublicInfo> {
       insuranceNote: data.insurance_note,
       hours: data.business_hours,
       gallery: await loadGallery(admin),
+      pricing: {
+        prices: {
+          full: Number(data.price_full),
+          three_quarter: Number(data.price_three_quarter),
+          half: Number(data.price_half),
+          quarter: Number(data.price_quarter),
+        },
+        trailer: {
+          lengthM: Number(data.trailer_length_m),
+          widthM: Number(data.trailer_width_m),
+          heightM: Number(data.trailer_height_m),
+          atmKg: Number(data.trailer_atm_kg),
+          tareKg: data.trailer_tare_kg,
+        },
+        tipRatePerTonne: data.tip_rate_per_tonne === null ? null : Number(data.tip_rate_per_tonne),
+        includedKgFullLoad: data.tip_included_kg_full_load,
+        itemFees: data.tip_item_fees ?? {},
+      },
     };
   } catch {
     return FALLBACK;
