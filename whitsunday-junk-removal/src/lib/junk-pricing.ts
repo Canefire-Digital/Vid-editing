@@ -32,7 +32,10 @@ export type PricingConfig = {
   itemFees: Partial<Record<SurchargeKey, number | null>>;
 };
 
-export const DEFAULT_TRAILER = { lengthM: 3.66, widthM: 1.83, heightM: 1.2, atmKg: 2000, tareKg: null };
+export const DEFAULT_TRAILER = { lengthM: 3.66, widthM: 1.83, heightM: 1.2, atmKg: 2000, tareKg: 800 };
+/** Council weighbridge rate, and the tip weight a full-load price covers (= trailer payload). */
+export const DEFAULT_TIP_RATE_PER_TONNE = 400;
+export const DEFAULT_INCLUDED_KG_FULL_LOAD = 1200;
 
 export type CategoryKey = "furniture" | "appliances" | "garden" | "boxes" | "reno";
 

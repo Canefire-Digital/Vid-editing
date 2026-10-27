@@ -1,5 +1,5 @@
 import "server-only";
-import { DEFAULT_TRAILER, type PricingConfig } from "./junk-pricing";
+import { DEFAULT_INCLUDED_KG_FULL_LOAD, DEFAULT_TIP_RATE_PER_TONNE, DEFAULT_TRAILER, type PricingConfig } from "./junk-pricing";
 import { createAdminClient } from "./supabase/server";
 
 export type PublicInfo = {
@@ -30,8 +30,8 @@ const FALLBACK: PublicInfo = {
   pricing: {
     prices: { full: 650, three_quarter: 500, half: 330, quarter: 180 },
     trailer: DEFAULT_TRAILER,
-    tipRatePerTonne: null,
-    includedKgFullLoad: null,
+    tipRatePerTonne: DEFAULT_TIP_RATE_PER_TONNE,
+    includedKgFullLoad: DEFAULT_INCLUDED_KG_FULL_LOAD,
     itemFees: {},
   },
 };
