@@ -4,7 +4,7 @@ import { Wordmark } from "@/components/site/wordmark";
 import { getPublicInfo } from "@/lib/public";
 
 export const revalidate = 300;
-export const metadata: Metadata = { title: "Privacy policy" };
+export const metadata: Metadata = { title: "Privacy policy", alternates: { canonical: "/privacy" } };
 
 export default async function PrivacyPage() {
   const info = await getPublicInfo();

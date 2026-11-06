@@ -1,5 +1,12 @@
 import "server-only";
-import { DEFAULT_INCLUDED_KG_FULL_LOAD, DEFAULT_TIP_RATE_PER_TONNE, DEFAULT_TRAILER, type PricingConfig } from "./junk-pricing";
+import {
+  DEFAULT_DISCOUNT,
+  DEFAULT_DISCOUNT_THRESHOLD,
+  DEFAULT_EACH_FEES,
+  DEFAULT_TIP_RATES,
+  DEFAULT_TRAILER,
+  type PricingConfig,
+} from "./junk-pricing";
 import { createAdminClient } from "./supabase/server";
 
 export type PublicInfo = {
@@ -30,9 +37,10 @@ const FALLBACK: PublicInfo = {
   pricing: {
     prices: { full: 650, three_quarter: 500, half: 330, quarter: 180 },
     trailer: DEFAULT_TRAILER,
-    tipRatePerTonne: DEFAULT_TIP_RATE_PER_TONNE,
-    includedKgFullLoad: DEFAULT_INCLUDED_KG_FULL_LOAD,
-    itemFees: {},
+    tipRates: DEFAULT_TIP_RATES,
+    eachFees: DEFAULT_EACH_FEES,
+    discountThreshold: DEFAULT_DISCOUNT_THRESHOLD,
+    discount: DEFAULT_DISCOUNT,
   },
 };
 
@@ -43,7 +51,7 @@ export async function getPublicInfo(): Promise<PublicInfo> {
     const admin = createAdminClient();
     const { data } = await admin
       .from("settings")
-      .select("business_name, phone, email, abn, price_full, price_three_quarter, price_half, price_quarter, google_profile_url, insured, insurance_note, business_hours, trailer_length_m, trailer_width_m, trailer_height_m, trailer_atm_kg, trailer_tare_kg, tip_rate_per_tonne, tip_included_kg_full_load, tip_item_fees")
+      .select("business_name, phone, email, abn, price_full, price_three_quarter, price_half, price_quarter, google_profile_url, insured, insurance_note, business_hours, trailer_length_m, trailer_width_m, trailer_height_m, trailer_atm_kg, trailer_tare_kg, tip_rates, tip_each_fees, tip_discount_threshold, tip_discount")
       .eq("id", 1)
       .single();
     if (!data) return FALLBACK;
@@ -77,9 +85,10 @@ export async function getPublicInfo(): Promise<PublicInfo> {
           atmKg: Number(data.trailer_atm_kg),
           tareKg: data.trailer_tare_kg,
         },
-        tipRatePerTonne: data.tip_rate_per_tonne === null ? null : Number(data.tip_rate_per_tonne),
-        includedKgFullLoad: data.tip_included_kg_full_load,
-        itemFees: data.tip_item_fees ?? {},
+        tipRates: { ...DEFAULT_TIP_RATES, ...(data.tip_rates ?? {}) },
+        eachFees: { ...DEFAULT_EACH_FEES, ...(data.tip_each_fees ?? {}) },
+        discountThreshold: Number(data.tip_discount_threshold ?? DEFAULT_DISCOUNT_THRESHOLD),
+        discount: Number(data.tip_discount ?? DEFAULT_DISCOUNT),
       },
     };
   } catch {

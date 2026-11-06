@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getSettings, getTeam } from "@/lib/auth";
 import { bool, num, str } from "@/lib/form";
-import { SURCHARGES } from "@/lib/junk-pricing";
+import { EACH_FEES, STREAMS } from "@/lib/junk-pricing";
 import type { ActionResult } from "@/lib/types";
 
 export async function saveSettingsAction(_prev: ActionResult, fd: FormData): Promise<ActionResult> {
@@ -61,14 +61,14 @@ export async function saveSettingsAction(_prev: ActionResult, fd: FormData): Pro
       trailer_height_m: positive(num(fd, "trailer_height_m"), current.trailer_height_m),
       trailer_atm_kg: Math.round(positive(num(fd, "trailer_atm_kg"), current.trailer_atm_kg)),
       trailer_tare_kg: optionalWhole(num(fd, "trailer_tare_kg")),
-      tip_rate_per_tonne: optionalMoney(num(fd, "tip_rate_per_tonne")),
-      tip_included_kg_full_load: optionalWhole(num(fd, "tip_included_kg_full_load")),
-      tip_item_fees: Object.fromEntries(
-        SURCHARGES.flatMap((s) => {
-          const v = optionalMoney(num(fd, `fee_${s.key}`));
-          return v === null ? [] : [[s.key, v]];
-        }),
+      tip_rates: Object.fromEntries(
+        Object.keys(STREAMS).map((k) => [k, optionalMoney(num(fd, `rate_${k}`)) ?? Number(current.tip_rates?.[k] ?? 0)]),
       ),
+      tip_each_fees: Object.fromEntries(
+        Object.keys(EACH_FEES).map((k) => [k, optionalMoney(num(fd, `each_${k}`)) ?? Number(current.tip_each_fees?.[k] ?? 0)]),
+      ),
+      tip_discount_threshold: optionalMoney(num(fd, "tip_discount_threshold")) ?? current.tip_discount_threshold,
+      tip_discount: optionalMoney(num(fd, "tip_discount")) ?? current.tip_discount,
     })
     .eq("id", 1);
   if (error) return { error: error.message };

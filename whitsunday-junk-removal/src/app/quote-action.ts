@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { escapeHtml, sendEmail } from "@/lib/email";
 import { isISODate, str } from "@/lib/form";
 import { createAdminClient } from "@/lib/supabase/server";
+import { SITE_URL } from "@/lib/site-url";
 import type { ActionResult } from "@/lib/types";
 
 const recent = new Map<string, number[]>();
@@ -74,7 +75,7 @@ export async function submitQuoteAction(_prev: ActionResult, fd: FormData): Prom
       to,
       subject: `New quote request: ${row.name}${row.suburb ? ` (${row.suburb})` : ""}`,
       text: lines.join("\n"),
-      html: `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5">${lines.map((l) => escapeHtml(l)).join("<br>")}<br><br><a href="${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/admin/quotes">Open in dashboard</a></div>`,
+      html: `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5">${lines.map((l) => escapeHtml(l)).join("<br>")}<br><br><a href="${SITE_URL}/admin/quotes">Open in dashboard</a></div>`,
       replyTo: row.email,
     }).catch(() => null);
   }

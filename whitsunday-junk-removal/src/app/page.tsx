@@ -27,6 +27,9 @@ import { Wordmark } from "@/components/site/wordmark";
 import { aud } from "@/lib/format";
 import { trailerM3 } from "@/lib/junk-pricing";
 import { getPublicInfo, telHref } from "@/lib/public";
+import { SITE_URL } from "@/lib/site-url";
+
+export const metadata = { alternates: { canonical: "/" } };
 
 export const revalidate = 300;
 
@@ -81,10 +84,10 @@ export default async function HomePage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "@id": `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/#business`,
+    "@id": `${SITE_URL}/#business`,
     name: info.businessName,
     description: "Junk and rubbish removal across the Whitsundays — household, end-of-lease, deceased estates, green waste and commercial clear-outs.",
-    url: process.env.NEXT_PUBLIC_SITE_URL,
+    url: SITE_URL,
     telephone: info.phone ?? undefined,
     email: info.email ?? undefined,
     sameAs: info.googleProfileUrl ? [info.googleProfileUrl] : undefined,

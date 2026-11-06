@@ -8,8 +8,8 @@ import {
   Hammer,
   Minus,
   Plus,
-  Scale,
   RotateCcw,
+  Scale,
   Sprout,
   WashingMachine,
   type LucideIcon,
@@ -20,15 +20,16 @@ import {
   ITEMS,
   PREFILL_EVENT,
   estimate,
+  payloadKg,
   quoteLoadOption,
   trailerM3,
   type CategoryKey,
+  type Item,
   type PricingConfig,
   type Prefill,
 } from "@/lib/junk-pricing";
-import { LiveTrailer } from "./live-trailer";
-
-const HEAVY_KG = 1000;
+import { AnimatedNumber } from "./animated-number";
+import { TrailerScene, type Piece } from "./trailer-scene";
 
 const ICONS: Record<CategoryKey, LucideIcon> = {
   furniture: Armchair,
@@ -38,43 +39,75 @@ const ICONS: Record<CategoryKey, LucideIcon> = {
   reno: Hammer,
 };
 
+/** Most drawings shown in the trailer for one item (keeps 30 boxes readable). */
+const MAX_SPRITES_PER_ITEM = 12;
+
+const money = (n: number) => aud(Math.round(n), true);
+const cents = (n: number) => aud(n);
+
 export function JunkCalculator({ pricing }: { pricing: PricingConfig }) {
   const [tab, setTab] = useState<CategoryKey>("furniture");
+  // Order items were added, so new ones drop in on top
+  const [order, setOrder] = useState<string[]>([]);
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [viewLoad, setViewLoad] = useState<number | null>(null);
 
   const est = estimate(counts, pricing);
   const cap = trailerM3(pricing.trailer);
-  const chosen = ITEMS.filter((i) => counts[i.id]);
-  const itemCount = chosen.reduce((a, i) => a + counts[i.id], 0);
-  const loadsNeeded = est.tripsBySpace;
-  const shownShare = est.share > 1 ? est.share - (loadsNeeded - 1) : est.share;
+  const payload = payloadKg(pricing.trailer);
+  const itemCount = Object.values(counts).reduce((a, n) => a + n, 0);
   const overPayload = est.tripsByWeight !== null && est.tripsByWeight > est.tripsBySpace;
-  // Until the trailer's tare weight is set, flag anything over a tonne for a weight check.
-  const heavy = overPayload || (est.tripsByWeight === null && est.kg > HEAVY_KG);
 
-  // One coloured block per category in the trailer (the last trailer when it's more than one load)
-  const byCat = CATEGORIES.map((c) => ({
-    key: c.key,
-    colour: c.colour,
-    label: c.label.split(" ")[0],
-    share: chosen.filter((i) => i.category === c.key).reduce((a, i) => a + i.m3 * counts[i.id], 0) / cap,
-  })).filter((b) => b.share > 0);
-  const blocks = est.share <= 1 ? byCat : byCat.map((b) => ({ ...b, share: (b.share * shownShare) / est.share }));
+  // Split the pieces into trailer loads by volume, in the order they were added
+  const loads: { pieces: Piece[]; m3: number; kg: number }[] = [{ pieces: [], m3: 0, kg: 0 }];
+  for (const id of order) {
+    const item = ITEMS.find((i) => i.id === id) as Item;
+    const n = counts[id] ?? 0;
+    for (let k = 0; k < n; k++) {
+      let load = loads[loads.length - 1];
+      if (load.m3 + item.m3 > cap + 1e-6 && load.pieces.length) {
+        load = { pieces: [], m3: 0, kg: 0 };
+        loads.push(load);
+      }
+      load.m3 += item.m3;
+      load.kg += item.kg;
+      if (k < MAX_SPRITES_PER_ITEM || n <= MAX_SPRITES_PER_ITEM) {
+        load.pieces.push({ key: `${id}-${k}`, sprite: item.sprite, m3: item.m3, label: item.name });
+      }
+    }
+  }
+  const shownLoad = Math.min(viewLoad ?? loads.length - 1, loads.length - 1);
+  const current = loads[shownLoad];
 
-  const bump = (id: string, d: number) =>
+  const bump = (id: string, d: number) => {
+    setViewLoad(null);
     setCounts((c) => {
-      const n = Math.max(0, Math.min(50, (c[id] ?? 0) + d));
+      const n = Math.max(0, Math.min(60, (c[id] ?? 0) + d));
       const next = { ...c };
       if (n) next[id] = n;
       else delete next[id];
       return next;
     });
+    setOrder((o) => {
+      const has = o.includes(id);
+      const willHave = (counts[id] ?? 0) + d > 0;
+      if (willHave && !has) return [...o, id];
+      if (!willHave && has) return o.filter((x) => x !== id);
+      return o;
+    });
+  };
+
+  function reset() {
+    setCounts({});
+    setOrder([]);
+    setViewLoad(null);
+  }
 
   function book() {
-    const list = chosen.map((i) => `${counts[i.id]} × ${i.name}`).join(", ");
+    const list = order.map((id) => `${counts[id]} × ${ITEMS.find((i) => i.id === id)?.name}`).join(", ");
     const detail: Prefill = {
       load: quoteLoadOption(est),
-      message: `From the price calculator: ${list}. About ${est.m3.toFixed(1)} m³ / ${Math.round(est.kg)} kg. Estimate: ${est.label} — ${aud(est.total, true)}${est.itemFeesPending ? " + tip fees to confirm" : ""}.`,
+      message: `From the price calculator: ${list}. About ${est.m3.toFixed(1)} m³ / ${Math.round(est.kg)} kg. Estimate ${money(est.total)} (${est.label} ${money(est.loadPrice)} + tip fees ${cents(est.tipTotal)}${est.discount ? ` − ${money(est.discount)} discount` : ""}).`,
     };
     window.dispatchEvent(new CustomEvent(PREFILL_EVENT, { detail }));
     document.getElementById("quote")?.scrollIntoView({ behavior: "smooth" });
@@ -83,14 +116,49 @@ export function JunkCalculator({ pricing }: { pricing: PricingConfig }) {
   const visible = ITEMS.filter((i) => i.category === tab);
 
   return (
-    <div className="glass-card shadow-lift rounded-[2rem] p-4 sm:p-6 lg:p-8">
-      <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
-        {/* Item picker */}
-        <div className="min-w-0">
+    <div className="glass-card shadow-lift rounded-[2rem] p-3 sm:p-6 lg:p-8">
+      <div className="grid gap-5 lg:grid-cols-[1fr_1fr] lg:gap-8">
+        {/* ── Trailer scene (sticky on phones so you can watch it fill) ── */}
+        <div className="sticky top-16 z-10 -mx-3 bg-white/95 px-3 pb-2 pt-1 backdrop-blur sm:relative sm:top-0 sm:mx-0 sm:bg-transparent sm:p-0 lg:sticky lg:order-2 lg:top-24 lg:self-start">
+          <TrailerScene
+            pieces={current.pieces}
+            trailer={pricing.trailer}
+            kg={current.kg}
+            payloadKg={payload}
+            fillPct={(current.m3 / cap) * 100}
+            loadNo={shownLoad + 1}
+            loads={loads.length}
+          />
+          {itemCount > 0 && (
+            <div className={`pointer-events-none absolute left-[calc(0.75rem+3%)] rounded-xl bg-ocean px-3 py-1.5 text-white shadow-lg sm:left-[3%] lg:hidden ${loads.length > 1 ? "top-[calc(0.25rem+17%)]" : "top-[calc(0.25rem+5%)]"}`}>
+              <span className="block text-[10px] font-semibold uppercase tracking-wider text-white/70">Estimate</span>
+              <span key={est.total} className="wjr-pop block font-display text-xl font-extrabold">
+                <AnimatedNumber value={est.total} format={money} />
+              </span>
+            </div>
+          )}
+          {loads.length > 1 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {loads.map((l, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setViewLoad(i)}
+                  className={`rounded-full px-3 py-1 text-xs font-bold transition ${i === shownLoad ? "bg-ocean text-white" : "bg-paper text-ink-soft ring-1 ring-line hover:text-teal-700"}`}
+                >
+                  Load {i + 1} · {Math.round((l.m3 / cap) * 100)}%
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── Item picker ── */}
+        <div className="min-w-0 lg:order-1 lg:row-span-2">
           <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2 sm:flex-wrap sm:overflow-visible" role="tablist" aria-label="Item categories">
             {CATEGORIES.map((c) => {
               const Icon = ICONS[c.key];
-              const n = chosen.filter((i) => i.category === c.key).reduce((a, i) => a + counts[i.id], 0);
+              const n = ITEMS.filter((i) => i.category === c.key).reduce((a, i) => a + (counts[i.id] ?? 0), 0);
               const active = tab === c.key;
               return (
                 <button
@@ -114,6 +182,7 @@ export function JunkCalculator({ pricing }: { pricing: PricingConfig }) {
           <ul className="mt-3 grid gap-2 sm:grid-cols-2" role="tabpanel">
             {visible.map((item) => {
               const n = counts[item.id] ?? 0;
+              const tipNote = item.each ? `${aud(pricing.eachFees[item.each], true)} tip fee` : pricing.tipRates[item.stream] === 0 ? "free at the tip" : null;
               return (
                 <li
                   key={item.id}
@@ -121,9 +190,9 @@ export function JunkCalculator({ pricing }: { pricing: PricingConfig }) {
                 >
                   <span className="min-w-0">
                     <span className="block truncate text-sm font-semibold text-ink">{item.name}</span>
-                    <span className="flex items-center gap-1 text-xs text-ink-soft">
+                    <span className="flex flex-wrap items-center gap-x-1 text-xs text-ink-soft">
                       ~{item.m3 < 0.1 ? item.m3.toFixed(2) : item.m3.toFixed(1)} m³ · {item.kg} kg
-                      {item.surcharge && <span className="text-amber-700">· tip fee</span>}
+                      {tipNote && <span className={item.each ? "text-amber-700" : "text-teal-700"}>· {tipNote}</span>}
                     </span>
                   </span>
                   <span className="flex shrink-0 items-center gap-1.5">
@@ -155,65 +224,73 @@ export function JunkCalculator({ pricing }: { pricing: PricingConfig }) {
           <p className="mt-3 text-xs text-ink-soft">Can&apos;t see it? Add the closest match, or describe it in the quote form.</p>
         </div>
 
-        {/* Live result */}
-        <div className="lg:sticky lg:top-24 lg:self-start">
+        {/* ── Price, worked out step by step ── */}
+        <div className="lg:order-3">
           <div className="rounded-[1.5rem] border border-line bg-white p-5">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-ink-soft">
-                Our 12×6 ft trailer · {cap.toFixed(1)} m³
-              </span>
+              <span className="text-sm font-semibold text-ink-soft">How your price adds up</span>
               {itemCount > 0 && (
-                <button type="button" onClick={() => setCounts({})} className="flex items-center gap-1 text-xs font-semibold text-ink-soft hover:text-teal-700">
+                <button type="button" onClick={reset} className="flex items-center gap-1 text-xs font-semibold text-ink-soft hover:text-teal-700">
                   <RotateCcw size={13} /> Start again
                 </button>
               )}
             </div>
-            <LiveTrailer className="mt-2" blocks={blocks} />
-            {est.share > 1 && (
-              <p className="-mt-1 text-center text-xs font-semibold text-teal-700">
-                Showing load {loadsNeeded} of {loadsNeeded} — the first {loadsNeeded - 1 === 1 ? "is" : `${loadsNeeded - 1} are`} full
-              </p>
+
+            {itemCount === 0 ? (
+              <p className="mt-3 text-sm text-ink-soft">Add a few items and watch the trailer fill — your price builds here.</p>
+            ) : (
+              <ol className="mt-3 space-y-1 text-sm">
+                <Step key={`load-${est.label}`} n={1} title={est.share > 1 ? `${est.label} — ${est.m3.toFixed(1)} m³` : `${est.label} — ${est.m3.toFixed(1)} of ${cap.toFixed(1)} m³`} value={money(est.loadPrice)} />
+                <li className="pt-2 text-xs font-bold uppercase tracking-wider text-ink-soft">
+                  <span className="mr-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-ocean text-[11px] text-white">2</span>
+                  Tip fees at council rates
+                </li>
+                {est.tipLines.map((l) => (
+                  <li key={l.kind === "weight" ? l.stream : l.fee} className="wjr-line-in flex justify-between gap-3 rounded-lg py-0.5 pl-7">
+                    <span className="text-ink-soft">
+                      {l.kind === "weight" ? (
+                        <>
+                          {l.label}: {Math.round(l.kg)} kg {l.rate ? <>× ${l.rate}/t</> : null}
+                        </>
+                      ) : (
+                        <>
+                          {l.count} × {l.label} @ ${l.each}
+                        </>
+                      )}
+                    </span>
+                    <span className={`font-semibold tabular-nums ${l.cost === 0 ? "text-teal-700" : "text-ink"}`}>{l.cost === 0 ? "free" : <AnimatedNumber value={l.cost} format={cents} />}</span>
+                  </li>
+                ))}
+                {est.discount > 0 && (
+                  <Step n={3} title={`Big-load discount (tip fees over ${money(pricing.discountThreshold)})`} value={`− ${money(est.discount)}`} good />
+                )}
+              </ol>
             )}
 
-            <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-              <Metric label="Space" value={itemCount ? `${Math.round(est.share * 100)}%` : "—"} />
-              <Metric label="Volume" value={itemCount ? `${est.m3.toFixed(1)} m³` : "—"} />
-              <Metric label="Weight" value={itemCount ? `${Math.round(est.kg)} kg` : "—"} />
+            <div className="mt-4 flex items-end justify-between gap-2 border-t border-line pt-3">
+              <span>
+                <span className="block font-display text-lg font-bold text-ink">Your estimate</span>
+                {itemCount > 0 && (
+                  <span className="text-xs text-ink-soft">
+                    {money(est.loadPrice)} + {cents(est.tipTotal)} tip{est.discount ? ` − ${money(est.discount)}` : ""}
+                  </span>
+                )}
+              </span>
+              <span key={est.total} className="wjr-pop font-display text-4xl font-extrabold tracking-tight text-ocean">
+                {itemCount ? <AnimatedNumber value={est.total} format={money} /> : "—"}
+              </span>
             </div>
 
-            <div className="mt-4 border-t border-line pt-4">
-              {itemCount ? (
-                <dl className="space-y-1.5 text-sm">
-                  <Line k={est.label} v={aud(est.loadPrice, true)} />
-                  {est.weightCharge > 0 && <Line k="Heavy load (extra tip weight)" v={aud(est.weightCharge, true)} />}
-                  {est.itemFees.map((f) => (
-                    <Line key={f.key} k={`${f.count} × ${f.label} tip fee`} v={f.each === null ? "on quote" : aud(f.each * f.count, true)} muted={f.each === null} />
-                  ))}
-                </dl>
-              ) : (
-                <p className="text-sm text-ink-soft">Add items to see your price.</p>
-              )}
-              <div className="mt-3 flex items-end justify-between gap-2 border-t border-line pt-3">
-                <span className="font-display text-lg font-bold text-ink">Estimate</span>
-                <span className="font-display text-4xl font-extrabold tabular-nums tracking-tight text-ocean">
-                  {itemCount ? aud(est.total, true) : "—"}
-                  {itemCount > 0 && est.itemFeesPending && <span className="align-top text-base text-amber-700">*</span>}
-                </span>
-              </div>
-              {est.itemFeesPending && <p className="mt-1 text-right text-xs text-amber-700">* plus tip fees for flagged items, confirmed on your quote</p>}
-              {heavy && (
-                <p className="mt-3 flex gap-2 rounded-xl bg-amber-50 p-2.5 text-xs text-amber-800">
-                  <Scale size={15} className="mt-0.5 shrink-0" />
-                  {overPayload
-                    ? `That's about ${Math.round(est.kg)} kg — over our trailer's legal payload, so it needs ${est.tripsByWeight} trips by weight. We'll confirm the price.`
-                    : `That's a heavy load (about ${Math.round(est.kg)} kg). Tip fees are charged by weight, so we'll confirm the price.`}
-                </p>
-              )}
-              <button type="button" onClick={book} disabled={!itemCount} className="btn btn-sun mt-4 w-full text-base">
-                Book this load <ArrowRight size={18} />
-              </button>
-              <p className="mt-2 text-center text-xs text-ink-soft">Estimate only — we confirm the exact price on site before lifting a thing.</p>
-            </div>
+            {overPayload && (
+              <p className="mt-3 flex gap-2 rounded-xl bg-amber-50 p-2.5 text-xs text-amber-800">
+                <Scale size={15} className="mt-0.5 shrink-0" />
+                About {Math.round(est.kg).toLocaleString()} kg is over our trailer&apos;s {payload?.toLocaleString()} kg legal payload, so it&apos;s {est.tripsByWeight} trips by weight. We&apos;ll confirm the price.
+              </p>
+            )}
+            <button type="button" onClick={book} disabled={!itemCount} className="btn btn-sun mt-4 w-full text-base">
+              Book this load <ArrowRight size={18} />
+            </button>
+            <p className="mt-2 text-center text-xs text-ink-soft">Estimate only — we confirm the exact price on site before lifting a thing.</p>
           </div>
         </div>
       </div>
@@ -221,20 +298,14 @@ export function JunkCalculator({ pricing }: { pricing: PricingConfig }) {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function Step({ n, title, value, good }: { n: number; title: string; value: string; good?: boolean }) {
   return (
-    <div className="rounded-xl bg-paper px-2 py-2">
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-soft">{label}</div>
-      <div className="font-display text-lg font-bold tabular-nums text-ocean">{value}</div>
-    </div>
-  );
-}
-
-function Line({ k, v, muted }: { k: string; v: string; muted?: boolean }) {
-  return (
-    <div className="flex justify-between gap-3">
-      <dt className="text-ink-soft">{k}</dt>
-      <dd className={`tabular-nums font-semibold ${muted ? "text-amber-700" : "text-ink"}`}>{v}</dd>
-    </div>
+    <li className="wjr-line-in flex justify-between gap-3 rounded-lg py-0.5">
+      <span className="flex items-center gap-1.5 font-semibold text-ink">
+        <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ocean text-[11px] font-bold text-white">{n}</span>
+        {title}
+      </span>
+      <span className={`font-semibold tabular-nums ${good ? "text-teal-700" : "text-ink"}`}>{value}</span>
+    </li>
   );
 }

@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { SITE_URL } from "@/lib/site-url";
 import type { ActionResult } from "@/lib/types";
 
 export async function signIn(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
@@ -24,7 +25,7 @@ export async function sendPasswordReset(_prev: ActionResult, formData: FormData)
   const email = String(formData.get("email") ?? "").trim();
   if (!email) return { error: "Enter your email first." };
   const supabase = await createClient();
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const site = SITE_URL;
   await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${site}/auth/callback?next=/admin/settings` });
   return { ok: "If that email belongs to the team, a reset link is on its way." };
 }

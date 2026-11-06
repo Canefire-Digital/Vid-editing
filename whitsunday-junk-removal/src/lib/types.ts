@@ -49,9 +49,10 @@ export type Settings = {
   trailer_height_m: number;
   trailer_atm_kg: number;
   trailer_tare_kg: number | null;
-  tip_rate_per_tonne: number | null;
-  tip_included_kg_full_load: number | null;
-  tip_item_fees: Record<string, number>;
+  tip_rates: Record<string, number>;
+  tip_each_fees: Record<string, number>;
+  tip_discount_threshold: number;
+  tip_discount: number;
 };
 
 export type Client = Audit & {

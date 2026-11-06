@@ -1,7 +1,7 @@
 import { ActionForm } from "@/components/admin/forms";
 import { Card, PageHeader } from "@/components/admin/ui";
 import { getSettings, getTeam } from "@/lib/auth";
-import { payloadKg, SURCHARGES, trailerM3 } from "@/lib/junk-pricing";
+import { EACH_FEES, payloadKg, STREAMS, trailerM3 } from "@/lib/junk-pricing";
 import { changePasswordAction, saveProfileAction, saveSettingsAction } from "./actions";
 
 export const metadata = { title: "Settings" };
@@ -95,23 +95,26 @@ export default async function SettingsPage() {
             )}
           </p>
 
-          <div className="mt-5 grid gap-4 md:grid-cols-2">
-            <Input label="Tip rate ($ per tonne)" name="tip_rate_per_tonne" value={s.tip_rate_per_tonne} inputMode="decimal" hint="Council commercial weighbridge rate" />
-            <Input
-              label="Tip weight included in a full-load price (kg)"
-              name="tip_included_kg_full_load"
-              value={s.tip_included_kg_full_load}
-              inputMode="numeric"
-              hint="Heavier loads pay the extra at the tip rate. Leave blank for no weight surcharge."
-            />
-          </div>
-          <p className="mb-2 mt-5 text-sm font-semibold text-ocean">Per-item tip fees (on top of the load price)</p>
+          <p className="mb-2 mt-5 text-sm font-semibold text-ocean">Tip rates by material ($ per tonne, inc GST)</p>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {SURCHARGES.map((f) => (
-              <Input key={f.key} label={`${f.label} ($)`} name={`fee_${f.key}`} value={s.tip_item_fees?.[f.key] ?? null} inputMode="decimal" hint={f.hint} />
+            {(Object.keys(STREAMS) as (keyof typeof STREAMS)[]).map((k) => (
+              <Input key={k} label={STREAMS[k].label} name={`rate_${k}`} value={s.tip_rates?.[k] ?? 0} inputMode="decimal" hint={`Council: ${STREAMS[k].councilName}`} />
             ))}
           </div>
-          <p className="mt-2 text-xs text-slate-500">Blank = shown on the website as “confirmed on quote”. Enter 0 if the tip takes it free.</p>
+          <p className="mb-2 mt-5 text-sm font-semibold text-ocean">Charged per item instead of by weight ($ each)</p>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {(Object.keys(EACH_FEES) as (keyof typeof EACH_FEES)[]).map((k) => (
+              <Input key={k} label={EACH_FEES[k].label} name={`each_${k}`} value={s.tip_each_fees?.[k] ?? 0} inputMode="decimal" />
+            ))}
+          </div>
+          <p className="mb-2 mt-5 text-sm font-semibold text-ocean">Big-tip discount</p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Input label="When tip fees are over ($)" name="tip_discount_threshold" value={s.tip_discount_threshold} inputMode="decimal" />
+            <Input label="Take this off the load price ($)" name="tip_discount" value={s.tip_discount} inputMode="decimal" />
+          </div>
+          <p className="mt-2 text-xs text-slate-500">
+            Website price = load price + tip fees at cost − discount. Rates from Whitsunday Regional Council&apos;s 2025-26 commercial fees — update when the council changes them (usually 1 July).
+          </p>
         </Card>
 
         <Card title="Website & reviews">
