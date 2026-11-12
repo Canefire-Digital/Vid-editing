@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { Camera, CheckCircle2, Send, X } from "lucide-react";
 import { submitQuoteAction } from "@/app/quote-action";
@@ -171,9 +172,9 @@ export function QuoteForm({ backend = "app" }: { backend?: "app" | "netlify" }) 
         )}
       </button>
       <p className="text-center text-xs text-ink-soft sm:col-span-2">No obligation. We&apos;ll only use your details to quote this job —{" "}
-        <a href="/privacy" className="underline hover:text-teal-700">
+        <Link href="/privacy" className="underline hover:text-teal-700">
           privacy policy
-        </a>
+        </Link>
         .</p>
     </form>
   );

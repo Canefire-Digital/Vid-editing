@@ -22,41 +22,27 @@ import { SiteHeader } from "@/components/site/header";
 import { HeroPrice } from "@/components/site/hero-price";
 import { JunkCalculator } from "@/components/site/junk-calculator";
 import { QuoteForm } from "@/components/site/quote-form";
+import Link from "next/link";
 import { Reveal } from "@/components/site/reveal";
-import { Wordmark } from "@/components/site/wordmark";
+import { SiteFooter } from "@/components/site/site-footer";
 import { aud } from "@/lib/format";
 import { trailerM3 } from "@/lib/junk-pricing";
 import { getPublicInfo, telHref } from "@/lib/public";
+import { AREAS } from "@/lib/landing-pages";
 import { SITE_URL } from "@/lib/site-url";
 
 export const metadata = { alternates: { canonical: "/" } };
 
 export const revalidate = 300;
 
-const AREAS = [
-  "Airlie Beach",
-  "Cannonvale",
-  "Jubilee Pocket",
-  "Cannon Valley",
-  "Mandalay",
-  "Shute Harbour",
-  "Woodwark",
-  "Riordanvale",
-  "Gunyarra",
-  "Proserpine",
-  "Conway Beach",
-  "Hydeaway Bay",
-  "Dingo Beach",
-  "Bowen",
-];
 
 const SERVICES = [
-  { icon: Sofa, title: "Furniture & household", text: "Couches, beds, whitegoods, boxes, garage junk." },
-  { icon: Building2, title: "End-of-lease cleanouts", text: "Fast turnaround with photos for the file." },
-  { icon: Home, title: "Deceased estates & downsizing", text: "Careful, at your pace. We set aside keepers." },
-  { icon: Leaf, title: "Green waste & yard clean-ups", text: "Palm fronds, branches, storm debris." },
-  { icon: PackageOpen, title: "Commercial & office", text: "Desks, fit-out leftovers, holiday-let swaps." },
-  { icon: Hammer, title: "Light reno waste", text: "Old kitchens, vanities, carpet, timber." },
+  { icon: Sofa, title: "Furniture & household", text: "Couches, beds, whitegoods, boxes, garage junk.", href: "/#calculator" },
+  { icon: Building2, title: "End-of-lease cleanouts", text: "Fast turnaround with photos for the file.", href: "/end-of-lease-cleanouts" },
+  { icon: Home, title: "Deceased estates & downsizing", text: "Careful, at your pace. We set aside keepers.", href: "/deceased-estate-cleanouts" },
+  { icon: Leaf, title: "Green waste & yard clean-ups", text: "Palm fronds, branches, storm debris.", href: "/green-waste-removal" },
+  { icon: PackageOpen, title: "Commercial & office", text: "Desks, fit-out leftovers, holiday-let swaps.", href: "/#quote" },
+  { icon: Hammer, title: "Light reno waste", text: "Old kitchens, vanities, carpet, timber.", href: "/#calculator" },
 ];
 
 const FAQS = [
@@ -64,7 +50,7 @@ const FAQS = [
   { q: "Do I need to be home or carry anything out?", a: "No. We do all the lifting from wherever it is. If we can get access, we can do the job while you're out and send before and after photos." },
   { q: "What can't you take?", a: "Asbestos, chemicals, liquid paint, gas bottles, car batteries and medical waste. Ask if you're unsure — we'll point you to the right place." },
   { q: "How do I pay?", a: "Bank transfer or cash on the day. Real estate agencies and businesses can be set up on account." },
-  { q: "Where do you go?", a: "Airlie Beach, Cannonvale, Proserpine and the wider Whitsunday region. Bowen and further out by arrangement." },
+  { q: "Where do you go?", a: "Airlie Beach, Cannonvale, Proserpine and the wider Whitsunday region. Bowen and further out by arrangement. See the area pages linked in the footer for local details." },
 ];
 
 export default async function HomePage() {
@@ -136,11 +122,14 @@ export default async function HomePage() {
               <span className="glass-dark inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em]">
                 <MapPin size={14} className="text-sun" /> Airlie Beach · Cannonvale · Proserpine
               </span>
-              <h1 id="hero-heading" className="mt-6 font-display text-[2.7rem] font-extrabold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
+              <h1 id="hero-heading" className="mt-6 text-sm font-bold uppercase tracking-[0.18em] text-teal-200 sm:text-base">
+                Junk &amp; rubbish removal, Airlie Beach to Proserpine
+              </h1>
+              <p className="mt-3 font-display text-[2.7rem] font-extrabold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
                 Junk gone.
                 <br />
                 <span className="text-sun">Without lifting a finger.</span>
-              </h1>
+              </p>
               <p className="mt-6 max-w-xl text-lg text-white/85 sm:text-xl">
                 Local rubbish removal for Whitsunday homes, rentals and businesses. Fixed load pricing from{" "}
                 <strong className="text-white">{aud(p.quarter, true)}</strong> — check your price in seconds, then we do all the lifting.
@@ -224,7 +213,8 @@ export default async function HomePage() {
             </Reveal>
             <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {SERVICES.map((sv, i) => (
-                <Reveal key={sv.title} delay={i * 50} as="li" className="glass-card flex items-center gap-4 rounded-2xl p-4">
+                <Reveal key={sv.title} delay={i * 50} as="li">
+                  <Link href={sv.href} className="glass-card flex h-full items-center gap-4 rounded-2xl p-4 transition hover:-translate-y-0.5 hover:shadow-lift">
                     <span className="ocean flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
                       <sv.icon size={20} className="text-white" />
                     </span>
@@ -232,6 +222,7 @@ export default async function HomePage() {
                       <strong className="block font-display font-bold text-ocean">{sv.title}</strong>
                       <span className="text-sm text-ink-soft">{sv.text}</span>
                     </span>
+                  </Link>
                 </Reveal>
               ))}
             </ul>
@@ -357,48 +348,7 @@ export default async function HomePage() {
         </section>
       </main>
 
-      {/* ───────── FOOTER ───────── */}
-      <footer className="ocean px-4 pb-28 pt-14 text-white md:pb-14">
-        <div className="mx-auto grid max-w-7xl gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:px-4">
-          <div className="lg:col-span-2">
-            <Wordmark tone="light" />
-            <p className="mt-4 max-w-sm text-sm text-white/75">
-              Junk &amp; rubbish removal across the Whitsunday Region, QLD.{info.abn ? ` ABN ${info.abn}.` : ""}
-            </p>
-            <p className="mt-3 max-w-md text-xs leading-relaxed text-white/55">Servicing {AREAS.join(", ")}.</p>
-          </div>
-          <div>
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">Contact</h2>
-            <ul className="mt-3 space-y-2 text-sm">
-              {tel && (
-                <li>
-                  <a href={tel} className="hover:underline">{info.phone}</a>
-                </li>
-              )}
-              {info.email && (
-                <li>
-                  <a href={`mailto:${info.email}`} className="hover:underline">{info.email}</a>
-                </li>
-              )}
-              {info.hours && <li className="text-white/75">{info.hours}</li>}
-            </ul>
-          </div>
-          <div>
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">More</h2>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li><a href="#calculator" className="hover:underline">Price calculator</a></li>
-              {info.googleProfileUrl && (
-                <li>
-                  <a href={info.googleProfileUrl} target="_blank" rel="noreferrer" className="hover:underline">Google reviews</a>
-                </li>
-              )}
-              <li><a href="/privacy" className="hover:underline">Privacy</a></li>
-              <li><a href="/login" className="hover:underline">Team login</a></li>
-            </ul>
-          </div>
-        </div>
-        <p className="mx-auto mt-10 max-w-7xl text-xs text-white/50 lg:px-4">© {new Date().getFullYear()} {info.businessName}</p>
-      </footer>
+      <SiteFooter info={info} tel={tel} />
 
       <FloatingCta tel={tel} />
     </div>
