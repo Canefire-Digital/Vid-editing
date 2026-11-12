@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Next.js runtime: turns the .next build into Netlify functions + routing.
+# Declared explicitly so it always runs (without it the site 404s).
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

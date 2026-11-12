@@ -1,0 +1,348 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy-950: #050d1a;
+  --color-navy-900: #081426;
+  --color-navy-850: #0b1a30;
+  --color-navy-800: #0f2240;
+  --color-navy-700: #163056;
+  --color-navy-600: #1e3f6e;
+  --color-teal-300: #5eead4;
+  --color-teal-400: #2dd4bf;
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0d9488;
+  --color-aqua-400: #22d3ee;
+
+  /* Public site (light) */
+  --color-paper: #f6f9fb;
+  --color-ink: #0b1a30;
+  --color-ink-soft: #46586e;
+  --color-line: #e1e8ef;
+  --color-ocean: #0b2545;
+  --color-teal-700: #0f766e;
+  --color-teal-800: #115e59;
+  --color-sun: #fbbf24;
+  --color-sun-ink: #3d2604;
+  --shadow-soft: 0 1px 2px rgb(11 37 69 / 0.05), 0 12px 32px -12px rgb(11 37 69 / 0.2);
+  --shadow-lift: 0 2px 4px rgb(11 37 69 / 0.06), 0 30px 60px -24px rgb(11 37 69 / 0.35);
+  --animate-drift: drift 24s ease-in-out infinite alternate;
+  --animate-drift-slow: drift 38s ease-in-out infinite alternate-reverse;
+  --animate-bob: bob 3.2s ease-in-out infinite;
+
+  @keyframes drift {
+    from { transform: translate3d(-4%, 0, 0) scale(1.05); }
+    to { transform: translate3d(6%, -4%, 0) scale(1.18); }
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-head), var(--font-body), ui-sans-serif, sans-serif;
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 11s ease-in-out infinite;
+  --animate-shine: shine 3.5s linear infinite;
+  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-pulse-ring: pulse-ring 2.2s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -18px, 0); }
+  }
+  @keyframes shine {
+    from { background-position: 200% center; }
+    to { background-position: -200% center; }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgb(45 212 191 / 0.55); }
+    80%, 100% { box-shadow: 0 0 0 18px rgb(45 212 191 / 0); }
+  }
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+@layer components {
+  .glass {
+    background: color-mix(in oklab, #ffffff 88%, transparent);
+    border: 1px solid rgb(11 37 69 / 0.08);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .card {
+    border-radius: 1rem;
+    background: #fff;
+    border: 1px solid var(--color-line);
+    box-shadow: 0 1px 2px rgb(11 37 69 / 0.04);
+    padding: 1rem;
+  }
+  @media (min-width: 768px) {
+    .card { padding: 1.25rem; }
+  }
+
+  .text-gradient {
+    background: linear-gradient(100deg, #0f766e, #0e7490 40%, #2dd4bf 55%, #0f766e 70%, #0b2545);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: var(--animate-shine);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.75rem;
+    padding: 0.7rem 1.1rem;
+    font-weight: 600;
+    font-size: 0.925rem;
+    line-height: 1.1;
+    transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.2s ease, opacity 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    min-height: 44px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.55; pointer-events: none; }
+  .btn-primary {
+    background: linear-gradient(135deg, #0f766e, #0d9488);
+    color: #fff;
+    box-shadow: 0 8px 22px -10px rgb(15 118 110 / 0.7);
+  }
+  .btn-primary:hover { box-shadow: 0 10px 28px -8px rgb(15 118 110 / 0.8); }
+  .btn-ghost {
+    background: #fff;
+    border: 1px solid var(--color-line);
+    color: var(--color-ocean);
+  }
+  .btn-ghost:hover { border-color: #0f766e; color: #0f766e; }
+  .btn-danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+  }
+  .btn-danger:hover { background: #fee2e2; }
+  .btn-sm { padding: 0.45rem 0.75rem; min-height: 36px; font-size: 0.85rem; border-radius: 0.6rem; }
+
+  .label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #2b3d52;
+    margin-bottom: 0.35rem;
+  }
+  .input {
+    width: 100%;
+    border-radius: 0.7rem;
+    background: #fff;
+    border: 1px solid #cfd9e3;
+    padding: 0.7rem 0.85rem;
+    color: var(--color-ink);
+    font-size: 16px; /* stops iOS zooming into inputs */
+    min-height: 44px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .input::placeholder { color: #8394a8; }
+  .input:focus {
+    outline: none;
+    border-color: #0f766e;
+    box-shadow: 0 0 0 3px rgb(15 118 110 / 0.18);
+  }
+  select.input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%230f766e' stroke-width='2'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.25rem;
+  }
+  textarea.input { min-height: 90px; }
+
+  .table { width: 100%; font-size: 0.9rem; border-collapse: collapse; }
+  .table th {
+    text-align: left;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-ink-soft);
+    font-weight: 700;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .table td {
+    padding: 0.7rem 0.75rem;
+    border-bottom: 1px solid #eef2f6;
+    vertical-align: middle;
+  }
+  .table tr:last-child td { border-bottom: 0; }
+  .table tbody tr:hover td { background: #f8fafc; }
+
+  .reveal { animation: var(--animate-rise); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Brand extras shared by the website and dashboard:
+   ocean navy + teal, sunlit gold CTA.
+   ───────────────────────────────────────────────────────────── */
+
+.site {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 3px solid #0f766e;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.ocean {
+  background-image: linear-gradient(135deg, #0b2545 0%, #0e3a52 42%, #0f766e 100%);
+}
+.sun {
+  background-image: linear-gradient(100deg, #fbbf24, #fcd34d);
+  color: var(--color-sun-ink);
+}
+
+.glass-card {
+  background: color-mix(in oklab, #ffffff 82%, transparent);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  border: 1px solid rgb(11 37 69 / 0.08);
+  box-shadow: var(--shadow-soft);
+}
+.glass-dark {
+  background: rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgb(255 255 255 / 0.22);
+}
+
+.btn-sun {
+  background-image: linear-gradient(100deg, #fbbf24, #fcd34d);
+  color: var(--color-sun-ink);
+  box-shadow: 0 10px 28px -10px rgb(217 119 6 / 0.55);
+}
+.btn-sun:hover { filter: brightness(1.04); box-shadow: 0 14px 32px -10px rgb(217 119 6 / 0.65); }
+.btn-navy { background: #0b2545; color: #fff; }
+.btn-navy:hover { background: #0e3a52; }
+.btn-outline { background: #fff; color: #0b2545; border: 1px solid var(--color-line); }
+.btn-outline:hover { border-color: #0f766e; color: #0f766e; }
+.btn-glass { background: rgb(255 255 255 / 0.12); color: #fff; border: 1px solid rgb(255 255 255 / 0.35); }
+.btn-glass:hover { background: rgb(255 255 255 / 0.2); }
+
+
+.eyebrow {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #0f766e;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: #e8f4f3;
+  color: #115e59;
+}
+
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fbbf24 var(--fill, 50%), rgb(255 255 255 / 0.25) var(--fill, 50%));
+  outline-offset: 6px;
+}
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #fff;
+  border: 4px solid #fbbf24;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.3);
+  cursor: grab;
+}
+input[type="range"].slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #fff;
+  border: 4px solid #fbbf24;
+  cursor: grab;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-drift,
+  .animate-drift-slow,
+  .animate-bob { animation: none !important; }
+}
+
+/* Price calculator: items drop into the trailer, price lines slide in */
+@keyframes wjr-drop {
+  0% { transform: translateY(-260%) rotate(-10deg); opacity: 0; }
+  55% { transform: translateY(6%) rotate(3deg); opacity: 1; }
+  75% { transform: translateY(-4%) rotate(-1deg); }
+  100% { transform: translateY(0) rotate(0); }
+}
+.wjr-drop { animation: wjr-drop 0.75s cubic-bezier(0.25, 0.9, 0.3, 1.15) both; }
+
+@keyframes wjr-line-in {
+  from { opacity: 0; transform: translateX(-10px); background: rgb(251 191 36 / 0.35); }
+  to { opacity: 1; transform: none; background: transparent; }
+}
+.wjr-line-in { animation: wjr-line-in 0.6s ease-out both; }
+
+@keyframes wjr-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.wjr-pop { animation: wjr-pop 0.45s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wjr-drop, .wjr-line-in, .wjr-pop { animation: none !important; }
+}
+
+/* Scroll reveal: only hidden when JavaScript is running (see layout.tsx) */
+.js .reveal-pending { opacity: 0; transform: translateY(2rem); }

@@ -1,0 +1,112 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { getSettings, getTeam } from "@/lib/auth";
+import { bool, num, str } from "@/lib/form";
+import { EACH_FEES, STREAMS } from "@/lib/junk-pricing";
+import type { ActionResult } from "@/lib/types";
+
+export async function saveSettingsAction(_prev: ActionResult, fd: FormData): Promise<ActionResult> {
+  const { supabase } = await getTeam();
+  const current = await getSettings();
+
+  const nextNumber = Math.round(num(fd, "invoice_next_number") ?? current.invoice_next_number);
+  if (nextNumber !== current.invoice_next_number) {
+    const { data: maxRow } = await supabase.from("invoices").select("number_seq").order("number_seq", { ascending: false }).limit(1);
+    const max = maxRow?.[0]?.number_seq ?? 0;
+    if (nextNumber <= max) return { error: `Next invoice number must be higher than ${max} (already used).` };
+  }
+  const pct = (k: string, fallback: number) => {
+    const v = num(fd, k);
+    return v === null ? fallback : Math.min(100, Math.max(0, v));
+  };
+  const money = (k: string, fallback: number) => {
+    const v = num(fd, k);
+    return v === null ? fallback : Math.max(0, v);
+  };
+  const days = (k: string, fallback: number) => Math.max(0, Math.round(num(fd, k) ?? fallback));
+
+  const { error } = await supabase
+    .from("settings")
+    .update({
+      business_name: str(fd, "business_name") ?? current.business_name,
+      abn: str(fd, "abn"),
+      phone: str(fd, "phone"),
+      email: str(fd, "email"),
+      postal_address: str(fd, "postal_address"),
+      bank_account_name: str(fd, "bank_account_name"),
+      bank_bsb: str(fd, "bank_bsb"),
+      bank_account_number: str(fd, "bank_account_number"),
+      invoice_prefix: str(fd, "invoice_prefix") ?? current.invoice_prefix,
+      invoice_next_number: Math.max(1, nextNumber),
+      invoice_footer: str(fd, "invoice_footer"),
+      gst_registered: bool(fd, "gst_registered"),
+      gst_rate: pct("gst_rate", current.gst_rate),
+      tax_set_aside_rate: pct("tax_set_aside_rate", current.tax_set_aside_rate),
+      terms_real_estate: days("terms_real_estate", current.terms_real_estate),
+      terms_commercial: days("terms_commercial", current.terms_commercial),
+      terms_residential: days("terms_residential", current.terms_residential),
+      price_full: money("price_full", current.price_full),
+      price_three_quarter: money("price_three_quarter", current.price_three_quarter),
+      price_half: money("price_half", current.price_half),
+      price_quarter: money("price_quarter", current.price_quarter),
+      quote_notify_email: str(fd, "quote_notify_email"),
+      google_profile_url: httpsOrNull(str(fd, "google_profile_url")),
+      google_review_url: httpsOrNull(str(fd, "google_review_url")),
+      insured: bool(fd, "insured"),
+      insurance_note: str(fd, "insurance_note"),
+      business_hours: str(fd, "business_hours"),
+      trailer_length_m: positive(num(fd, "trailer_length_m"), current.trailer_length_m),
+      trailer_width_m: positive(num(fd, "trailer_width_m"), current.trailer_width_m),
+      trailer_height_m: positive(num(fd, "trailer_height_m"), current.trailer_height_m),
+      trailer_atm_kg: Math.round(positive(num(fd, "trailer_atm_kg"), current.trailer_atm_kg)),
+      trailer_tare_kg: optionalWhole(num(fd, "trailer_tare_kg")),
+      tip_rates: Object.fromEntries(
+        Object.keys(STREAMS).map((k) => [k, optionalMoney(num(fd, `rate_${k}`)) ?? Number(current.tip_rates?.[k] ?? 0)]),
+      ),
+      tip_each_fees: Object.fromEntries(
+        Object.keys(EACH_FEES).map((k) => [k, optionalMoney(num(fd, `each_${k}`)) ?? Number(current.tip_each_fees?.[k] ?? 0)]),
+      ),
+      tip_discount_threshold: optionalMoney(num(fd, "tip_discount_threshold")) ?? current.tip_discount_threshold,
+      tip_discount: optionalMoney(num(fd, "tip_discount")) ?? current.tip_discount,
+    })
+    .eq("id", 1);
+  if (error) return { error: error.message };
+  revalidatePath("/", "layout");
+  return { ok: "Settings saved." };
+}
+
+function positive(v: number | null, fallback: number): number {
+  return v !== null && v > 0 ? v : Number(fallback);
+}
+function optionalWhole(v: number | null): number | null {
+  return v !== null && v >= 0 ? Math.round(v) : null;
+}
+function optionalMoney(v: number | null): number | null {
+  return v !== null && v >= 0 ? Math.round(v * 100) / 100 : null;
+}
+
+function httpsOrNull(v: string | null): string | null {
+  if (!v) return null;
+  return /^https:\/\//i.test(v) ? v : `https://${v.replace(/^\/+/, "")}`;
+}
+
+export async function saveProfileAction(_prev: ActionResult, fd: FormData): Promise<ActionResult> {
+  const { supabase, me } = await getTeam();
+  const name = str(fd, "display_name");
+  if (!name) return { error: "Enter a name." };
+  const { error } = await supabase.from("profiles").update({ display_name: name }).eq("id", me.id);
+  if (error) return { error: error.message };
+  revalidatePath("/admin", "layout");
+  return { ok: "Name updated." };
+}
+
+export async function changePasswordAction(_prev: ActionResult, fd: FormData): Promise<ActionResult> {
+  const { supabase } = await getTeam();
+  const pw = String(fd.get("password") ?? "");
+  if (pw.length < 10) return { error: "Use at least 10 characters." };
+  if (pw !== String(fd.get("confirm") ?? "")) return { error: "Passwords don't match." };
+  const { error } = await supabase.auth.updateUser({ password: pw });
+  if (error) return { error: error.message };
+  return { ok: "Password changed." };
+}
