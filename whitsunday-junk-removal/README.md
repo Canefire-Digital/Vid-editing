@@ -5,6 +5,11 @@ Next.js 16 · Supabase (database, logins, photo/receipt storage) · Netlify · R
 
 ---
 
+> **Status (12 Nov 2026):** Supabase project `vuiahqaamehddcpexspv` (Sydney) is set up with the full database, sign-ups disabled and
+> the Netlify site URL configured. Netlify has `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`;
+> `SUPABASE_SECRET_KEY` still needs to be added in Netlify by hand. Alex's login exists; add Lucas and Kobi with
+> `supabase/setup_team.sql` once their emails are known.
+
 ## 1. Supabase (database + logins) — ~10 min
 
 1. Create a project at [supabase.com](https://supabase.com). Region: **Sydney**.
