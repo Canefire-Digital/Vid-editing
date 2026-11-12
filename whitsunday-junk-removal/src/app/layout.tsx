@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   },
   description:
     "Fast, local junk and rubbish removal across the Whitsundays. House cleanouts, end-of-lease, green waste, furniture and commercial clear-outs. Fixed load pricing from $180.",
+  openGraph: { type: "website", locale: "en_AU", siteName: "Whitsunday Junk Removal" },
+  manifest: "/manifest.webmanifest",
 };
 
 export const viewport: Viewport = {

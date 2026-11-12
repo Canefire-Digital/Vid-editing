@@ -4,7 +4,11 @@ import { Wordmark } from "@/components/site/wordmark";
 import { getPublicInfo } from "@/lib/public";
 
 export const revalidate = 300;
-export const metadata: Metadata = { title: "Privacy policy", alternates: { canonical: "/privacy" } };
+export const metadata: Metadata = {
+  title: "Privacy policy",
+  description: "How Whitsunday Junk Removal collects, uses and protects your details when you ask for a quote or book a job.",
+  alternates: { canonical: "/privacy" },
+};
 
 export default async function PrivacyPage() {
   const info = await getPublicInfo();

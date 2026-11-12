@@ -81,20 +81,38 @@ export default async function HomePage() {
   ];
 
 
-  const jsonLd = {
-    "@context": "https://schema.org",
+  const business = {
     "@type": "LocalBusiness",
     "@id": `${SITE_URL}/#business`,
     name: info.businessName,
     description: "Junk and rubbish removal across the Whitsundays — household, end-of-lease, deceased estates, green waste and commercial clear-outs.",
     url: SITE_URL,
+    image: `${SITE_URL}/opengraph-image`,
     telephone: info.phone ?? undefined,
     email: info.email ?? undefined,
     sameAs: info.googleProfileUrl ? [info.googleProfileUrl] : undefined,
     areaServed: AREAS.map((a) => ({ "@type": "Place", name: `${a}, QLD` })),
     priceRange: `${aud(p.quarter, true)}–${aud(p.full, true)}`,
+    currenciesAccepted: "AUD",
+    paymentAccepted: "Cash, Bank transfer",
     address: { "@type": "PostalAddress", addressRegion: "QLD", addressCountry: "AU", addressLocality: "Whitsundays" },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Junk removal by trailer load",
+      itemListElement: tiers.map((t) => ({
+        "@type": "Offer",
+        name: `${t.label} load (${t.m3.toFixed(1)} m³)`,
+        price: t.price,
+        priceCurrency: "AUD",
+        itemOffered: { "@type": "Service", name: "Junk removal", serviceType: "Rubbish removal" },
+      })),
+    },
   };
+  const faq = {
+    "@type": "FAQPage",
+    mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  };
+  const jsonLd = { "@context": "https://schema.org", "@graph": [business, faq] };
 
   return (
     <div className="site relative min-h-dvh overflow-x-clip">
@@ -206,8 +224,7 @@ export default async function HomePage() {
             </Reveal>
             <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {SERVICES.map((sv, i) => (
-                <Reveal key={sv.title} delay={i * 50}>
-                  <li className="glass-card flex h-full items-center gap-4 rounded-2xl p-4">
+                <Reveal key={sv.title} delay={i * 50} as="li" className="glass-card flex items-center gap-4 rounded-2xl p-4">
                     <span className="ocean flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
                       <sv.icon size={20} className="text-white" />
                     </span>
@@ -215,7 +232,6 @@ export default async function HomePage() {
                       <strong className="block font-display font-bold text-ocean">{sv.title}</strong>
                       <span className="text-sm text-ink-soft">{sv.text}</span>
                     </span>
-                  </li>
                 </Reveal>
               ))}
             </ul>

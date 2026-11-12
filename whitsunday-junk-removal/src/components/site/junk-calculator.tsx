@@ -179,7 +179,8 @@ export function JunkCalculator({ pricing }: { pricing: PricingConfig }) {
             })}
           </div>
 
-          <ul className="mt-3 grid gap-2 sm:grid-cols-2" role="tabpanel">
+          <div role="tabpanel" aria-label={`${CATEGORIES.find((c) => c.key === tab)?.label} items`}>
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {visible.map((item) => {
               const n = counts[item.id] ?? 0;
               const tipNote = item.each ? `${aud(pricing.eachFees[item.each], true)} tip fee` : pricing.tipRates[item.stream] === 0 ? "free at the tip" : null;
@@ -221,6 +222,7 @@ export function JunkCalculator({ pricing }: { pricing: PricingConfig }) {
               );
             })}
           </ul>
+          </div>
           <p className="mt-3 text-xs text-ink-soft">Can&apos;t see it? Add the closest match, or describe it in the quote form.</p>
         </div>
 

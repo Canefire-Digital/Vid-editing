@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 /** Fades/slides children in when they scroll into view. */
-export function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
+export function Reveal({ children, delay = 0, className = "", as: Tag = "div" }: { children: ReactNode; delay?: number; className?: string; as?: "div" | "li" }) {
+  const ref = useRef<HTMLElement>(null);
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
@@ -24,12 +24,12 @@ export function Reveal({ children, delay = 0, className = "" }: { children: Reac
   }, []);
 
   return (
-    <div
-      ref={ref}
+    <Tag
+      ref={ref as never}
       className={`transition-all duration-700 ease-out motion-reduce:transition-none ${shown ? "" : "reveal-pending"} ${className}`}
       style={{ transitionDelay: `${delay}ms` }}
     >
       {children}
-    </div>
+    </Tag>
   );
 }

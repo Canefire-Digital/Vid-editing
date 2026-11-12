@@ -26,7 +26,7 @@ export function SiteHeader({ phone, tel }: { phone: string | null; tel: string |
   return (
     <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${scrolled ? "glass-card border-b border-line" : "bg-transparent"}`}>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 lg:px-8">
-        <Link href="/" aria-label="Whitsunday Junk Removal home">
+        <Link href="/" title="Whitsunday Junk Removal — home">
           <Wordmark tone={scrolled ? "dark" : "light"} />
         </Link>
         <nav aria-label="Main navigation" className="hidden items-center gap-7 lg:flex">
