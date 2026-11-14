@@ -129,7 +129,7 @@ export const LANDING_PAGES: LandingPage[] = [
       {
         heading: "Garden and storm clean-ups",
         body: [
-          "Palm fronds, hedge trimmings and branches after a blow go to the tip as green waste, which is charged at a fraction of the general-waste rate. If the pile is mostly green, your price drops accordingly. We take tree stumps and anything over 300 mm thick too, just tell us so we can price it right.",
+          "Palm fronds, hedge trimmings and branches after a blow go to the tip as green waste, which we can usually drop for nothing, so a green load is just the load price. We take tree stumps and anything over 300 mm thick too; the council charges those by weight, so tell us and we'll price it right.",
         ],
       },
       {
@@ -142,7 +142,7 @@ export const LANDING_PAGES: LandingPage[] = [
     commonJobs: ["Garage clear-out", "Green waste after pruning", "Old fridge, washer and dryer", "Moving-out leftovers", "Kids' trampoline and play gear"],
     faqs: [
       PRICE_FAQ,
-      { q: "Is green waste cheaper?", a: "Yes. The council charges green waste at a much lower rate per tonne than general waste, so a trailer of palm fronds costs noticeably less than a trailer of furniture. Keep green waste separate if you can and we'll price it that way." },
+      { q: "Is green waste cheaper?", a: "Yes. Clean green waste usually costs us nothing at the tip, so a trailer of palm fronds is just the load price, with no tip fees on top. Keep it separate from household rubbish and we'll price it that way." },
       ACCESS_FAQ,
       CANT_TAKE_FAQ,
     ],
@@ -316,17 +316,17 @@ export const LANDING_PAGES: LandingPage[] = [
     serviceType: "Green waste removal",
     title: "Green Waste Removal & Storm Clean-Up | Whitsundays",
     description:
-      "Palm fronds, branches, hedge trimmings and storm debris removed across Airlie Beach, Cannonvale and Proserpine. Cheaper tip rates for green waste, passed on to you.",
+      "Palm fronds, branches, hedge trimmings and storm debris removed across Airlie Beach, Cannonvale and Proserpine. Clean green waste means no tip fees on top of the load price.",
     eyebrow: "Yard clean-ups · Palm fronds · Cyclone-season debris",
     h1: "Green waste removal and storm clean-ups",
     intro:
       "In the Whitsundays the garden never stops. Palms drop fronds year round, hedges get away over the wet, and when a blow comes through there's a yard full of branches. We load it, haul it and take care of the tip.",
-    points: ["Green waste is charged at a lower tip rate than general waste", "Fronds, branches, trimmings, stumps and logs", "Fast turnaround after storms"],
+    points: ["Clean green waste: no tip fees, just the load price", "Fronds, branches, trimmings, stumps and logs", "Fast turnaround after storms"],
     sections: [
       {
         heading: "Why green waste costs less",
         body: [
-          "The council charges green waste at a much lower rate per tonne than general rubbish, and we pass that straight through. A full trailer of fronds and trimmings is one of the cheapest loads we do. Keep the green pile separate from household rubbish and the saving shows up in your price.",
+          "Clean green waste usually costs us nothing to drop at the tip, and we pass that straight through: a full trailer of fronds and trimmings is just the load price. Keep the green pile separate from household rubbish and the saving shows up in your price.",
           "Tree stumps and branches thicker than 300 mm go in a different council category at a higher rate, so tell us if there are any and we'll price them properly.",
         ],
       },

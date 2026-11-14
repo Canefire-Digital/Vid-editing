@@ -26,7 +26,7 @@ export const STREAMS: Record<Stream, { label: string; councilName: string }> = {
   construction: { label: "Reno / building waste", councilName: "C&D mixed waste" },
   green: { label: "Green waste", councilName: "Green waste" },
   stumps: { label: "Stumps & big branches", councilName: "Tree stumps/branches >300mm" },
-  concrete: { label: "Clean concrete", councilName: "Concrete" },
+  concrete: { label: "Concrete, tiles & soil", councilName: "Weighed at general rate (clean concrete only is $70/t)" },
   metal: { label: "Scrap metal", councilName: "Scrap metal" },
   ewaste: { label: "E-waste", councilName: "E-waste" },
 };
@@ -41,20 +41,26 @@ export const EACH_FEES: Record<EachFee, { label: string }> = {
   tyre_4wd_rim: { label: "4WD tyre on rim" },
 };
 
-/** Whitsunday Regional Council commercial fees 2025-26, inc GST and waste levy. */
+/**
+ * What the tip actually charges us (Kobi's figures, Oct 2026, cross-checked with
+ * Whitsunday Regional Council's 2025-26 schedule). Green waste is free for us at
+ * Cannonvale (council lists $75/t commercial); fridges and air-cons are degassed
+ * and go to scrap, so no council fee. Clean concrete is $70/t at the council, but
+ * mixed concrete/tiles/soil goes over the weighbridge at the general rate.
+ */
 export const DEFAULT_TIP_RATES: Record<Stream, number> = {
   general: 400,
   construction: 400,
-  green: 75,
+  green: 0,
   stumps: 122,
-  concrete: 70,
+  concrete: 400,
   metal: 0,
   ewaste: 0,
 };
 export const DEFAULT_EACH_FEES: Record<EachFee, number> = {
-  mattress: 54,
-  fridge: 13,
-  aircon: 16,
+  mattress: 52,
+  fridge: 0,
+  aircon: 0,
   tyre: 12,
   tyre_rim: 29,
   tyre_4wd: 21,
@@ -109,13 +115,13 @@ export type Item = {
 
 export const ITEMS: Item[] = [
   // Furniture
-  { id: "couch3", name: "3-seater couch", category: "furniture", m3: 1.4, kg: 45, stream: "general", sprite: "sofa" },
+  { id: "couch3", name: "3-seater couch", category: "furniture", m3: 1.4, kg: 50, stream: "general", sprite: "sofa" },
   { id: "couch2", name: "2-seater couch", category: "furniture", m3: 1.0, kg: 35, stream: "general", sprite: "sofa" },
-  { id: "modular", name: "Corner / modular lounge", category: "furniture", m3: 2.5, kg: 80, stream: "general", sprite: "sofa" },
+  { id: "modular", name: "Corner / modular lounge", category: "furniture", m3: 2.5, kg: 100, stream: "general", sprite: "sofa" },
   { id: "armchair", name: "Armchair / recliner", category: "furniture", m3: 0.6, kg: 30, stream: "general", sprite: "armchair" },
   { id: "mattressQ", name: "Queen / king mattress", category: "furniture", m3: 0.8, kg: 35, stream: "general", each: "mattress", sprite: "mattress" },
   { id: "mattressS", name: "Single / double mattress", category: "furniture", m3: 0.5, kg: 22, stream: "general", each: "mattress", sprite: "mattress" },
-  { id: "ensemble", name: "Ensemble / bed base", category: "furniture", m3: 0.6, kg: 35, stream: "general", each: "mattress", sprite: "mattress" },
+  { id: "ensemble", name: "Ensemble / bed base", category: "furniture", m3: 0.6, kg: 40, stream: "general", sprite: "mattress" },
   { id: "bedframe", name: "Bed frame (dismantled)", category: "furniture", m3: 0.4, kg: 30, stream: "general", sprite: "frame" },
   { id: "wardrobe", name: "Wardrobe", category: "furniture", m3: 0.9, kg: 60, stream: "general", sprite: "cabinet" },
   { id: "drawers", name: "Chest of drawers", category: "furniture", m3: 0.4, kg: 40, stream: "general", sprite: "drawers" },
@@ -134,8 +140,9 @@ export const ITEMS: Item[] = [
   { id: "dryer", name: "Dryer / dishwasher", category: "appliances", m3: 0.3, kg: 40, stream: "metal", sprite: "washer" },
   { id: "oven", name: "Oven / stove", category: "appliances", m3: 0.35, kg: 55, stream: "metal", sprite: "washer" },
   { id: "hws", name: "Hot water system", category: "appliances", m3: 0.3, kg: 50, stream: "metal", sprite: "washer" },
+  { id: "treadmill", name: "Treadmill / gym gear", category: "appliances", m3: 0.6, kg: 80, stream: "metal", sprite: "frame" },
   { id: "bbq", name: "BBQ (no gas bottle)", category: "appliances", m3: 0.6, kg: 40, stream: "metal", sprite: "washer" },
-  { id: "tv", name: "TV", category: "appliances", m3: 0.15, kg: 15, stream: "ewaste", sprite: "screen" },
+  { id: "tv", name: "TV", category: "appliances", m3: 0.15, kg: 25, stream: "ewaste", sprite: "screen" },
   { id: "computer", name: "Computer / monitor / printer", category: "appliances", m3: 0.08, kg: 8, stream: "ewaste", sprite: "screen" },
   { id: "small", name: "Microwave / small appliance", category: "appliances", m3: 0.06, kg: 10, stream: "ewaste", sprite: "aircon" },
 
@@ -147,14 +154,15 @@ export const ITEMS: Item[] = [
   { id: "trampoline", name: "Trampoline (dismantled)", category: "garden", m3: 0.8, kg: 60, stream: "metal", sprite: "frame" },
   { id: "play", name: "Swing set / play equipment", category: "garden", m3: 0.8, kg: 40, stream: "general", sprite: "frame" },
   { id: "mower", name: "Lawn mower (drained)", category: "garden", m3: 0.25, kg: 30, stream: "metal", sprite: "bike" },
+  { id: "rideon", name: "Ride-on mower (drained)", category: "garden", m3: 1.2, kg: 215, stream: "metal", sprite: "bike" },
   { id: "tyre", name: "Car tyre", category: "garden", m3: 0.1, kg: 9, stream: "general", each: "tyre", sprite: "tyre" },
   { id: "tyreRim", name: "Car tyre on rim", category: "garden", m3: 0.1, kg: 18, stream: "general", each: "tyre_rim", sprite: "tyre" },
   { id: "tyre4wd", name: "4WD tyre", category: "garden", m3: 0.15, kg: 15, stream: "general", each: "tyre_4wd", sprite: "tyre" },
   { id: "tyre4wdRim", name: "4WD tyre on rim", category: "garden", m3: 0.15, kg: 30, stream: "general", each: "tyre_4wd_rim", sprite: "tyre" },
 
   // Boxes & bags
-  { id: "box", name: "Moving box", category: "boxes", m3: 0.07, kg: 12, stream: "general", sprite: "box" },
-  { id: "bag", name: "Rubbish bag (70 L)", category: "boxes", m3: 0.07, kg: 6, stream: "general", sprite: "bag" },
+  { id: "box", name: "Moving box", category: "boxes", m3: 0.07, kg: 15, stream: "general", sprite: "box" },
+  { id: "bag", name: "Rubbish bag (70 L)", category: "boxes", m3: 0.07, kg: 8, stream: "general", sprite: "bag" },
   { id: "suitcase", name: "Suitcase / storage tub", category: "boxes", m3: 0.08, kg: 8, stream: "general", sprite: "box" },
   { id: "bike", name: "Bike", category: "boxes", m3: 0.3, kg: 13, stream: "metal", sprite: "bike" },
 
@@ -165,8 +173,9 @@ export const ITEMS: Item[] = [
   { id: "vanity", name: "Bathroom vanity", category: "reno", m3: 0.4, kg: 40, stream: "construction", sprite: "drawers" },
   { id: "door", name: "Internal door", category: "reno", m3: 0.08, kg: 20, stream: "construction", sprite: "planks" },
   { id: "plaster", name: "Plasterboard sheet", category: "reno", m3: 0.03, kg: 25, stream: "construction", sprite: "planks" },
-  { id: "rubble", name: "Wheelbarrow of tiles / rubble", category: "reno", m3: 0.08, kg: 130, stream: "construction", sprite: "rubble" },
-  { id: "concrete", name: "Wheelbarrow of clean concrete", category: "reno", m3: 0.08, kg: 160, stream: "concrete", sprite: "rubble" },
+  { id: "rubble", name: "Wheelbarrow of tiles / rubble", category: "reno", m3: 0.08, kg: 130, stream: "concrete", sprite: "rubble" },
+  { id: "concrete", name: "Wheelbarrow of concrete", category: "reno", m3: 0.08, kg: 160, stream: "concrete", sprite: "rubble" },
+  { id: "concretebag", name: "Bag of set concrete (20 kg)", category: "reno", m3: 0.012, kg: 20, stream: "concrete", sprite: "bag" },
   { id: "metalScrap", name: "Scrap metal (armful)", category: "reno", m3: 0.2, kg: 40, stream: "metal", sprite: "planks" },
 ];
 

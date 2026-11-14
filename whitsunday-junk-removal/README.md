@@ -78,9 +78,9 @@ in the "Before. After. Gone." section (suburb only, never the street address). G
 ## Website price calculator
 
 Price = **load price** (by how much of the 12×6 ft, 8.0 m³ trailer it fills) **+ tip fees at cost** − **$50 when tip fees are over $100**.
-Tip fees use Whitsunday Regional Council's 2025-26 commercial rates by material (general/C&D $400/t, green waste $75/t,
-stumps $122/t, concrete $70/t, scrap metal & e-waste free) plus per-item fees (mattress $54, fridge $13, air-con $16,
-tyres $12–$52). All of it is editable in **Settings → Trailer & tip fees** — update the rates each July when the council does.
+Tip fees are what the tip actually charges us (Kobi's sheet, Oct 2026): general, C&D and concrete/tiles/soil $400/t,
+stumps $122/t, green waste free (Cannonvale), scrap metal & e-waste free, fridges/air-cons degassed and scrapped (no fee);
+per-item: mattress $52, tyres $12–$52. All of it is editable in **Settings → Trailer & tip fees** — update the rates each July when the council does.
 Item sizes and weights are typical estimates in `src/lib/junk-pricing.ts`; compare against your weighbridge dockets.
 
 ## Planner (trailer view)
